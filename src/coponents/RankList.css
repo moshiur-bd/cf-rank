@@ -4,8 +4,11 @@
     padding-right: 10px;
 }
 
+.con-tittle{
+    padding: 10px;
+}
 .ranklist{
-    margin: 5%;
+    margin: 1% 5%;
 }
 .loading{
   display: flex;

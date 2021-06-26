@@ -60,7 +60,7 @@ const BSMRSTU_ORG_URL = `https://codeforces.com/ratings/organization/3403`
             {cf.contest.phase == "FINISHED" && <img src={logo} className="App-logo" alt="logo" />}
             {cf.contest.phase != "FINISHED" && <img src={logo} className="App-logo-animate" alt="logo" />}
 
-            <div className="con-tittle" style={{ "text-align": "center", "margin": "80px" }}>
+            <div className="con-tittle">
                 {cf.contest.name}
             </div>
 
