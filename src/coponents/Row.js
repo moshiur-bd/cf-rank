@@ -1,7 +1,7 @@
 import React from 'react'
 import './Row.css'
 
-export default function Row({data}){
+export default function Row({data, rowID}){
     const items = []
     //debugger;
     if(data == null) {
@@ -9,7 +9,11 @@ export default function Row({data}){
     }
 
     return (<tr className='row'>
-        <td>{data.party.members.map(m => m.handle + " ")}</td>
+        <td style={{ "text-align": "left" }}>{rowID}</td>
+        <td style={{ "text-align": "left" }}>{data.rank}</td>
+        <td style={{ "text-align": "left" }}>{data.party.members.map(m => m.handle + " ")}</td>
+        <td >{data.points}</td>
+        <td ></td>
         {data.problemResults.map(r => <td>{r.points}</td>)}
     </tr>)
 }
