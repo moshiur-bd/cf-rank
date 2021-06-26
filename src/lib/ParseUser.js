@@ -1,7 +1,4 @@
-//const HOST = `https://codeforces.com/ratings/country/Bangladesh`
-const ProxyHost = `http://192.168.18.13:8080/`
-//const HOST = `https://google.com`
-//const HOST = `https://codeforces.com/api/contest.standings?contestId=1535`
+const ProxyHost = `https://be-beam.swiftshopbd.com/`
 
 
 export default async function ParseCFUsersFromRank(url){

@@ -1,6 +1,5 @@
 import './App.css';
-import RankList from './coponents/RankList';
-import ParseUser from './lib/ParseUser'
+import RankList from './components/RankList'
 
 function App() {
   
