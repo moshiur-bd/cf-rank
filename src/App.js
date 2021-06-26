@@ -1,5 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
+import RankList from './coponents/RankList';
 
 function App() {
   return (
@@ -17,6 +18,8 @@ function App() {
         >
           Learn React
         </a>
+
+        <RankList key = "cf-rank"/>
       </header>
     </div>
   );
