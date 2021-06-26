@@ -1,0 +1,21 @@
+
+.ranklist td{
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.ranklist{
+    margin: 5%;
+}
+.loading{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 100vh;
+}
+
+.loading p{
+    padding-top: 20vh;
+}
