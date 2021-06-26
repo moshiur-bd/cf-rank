@@ -1,6 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import RankList from './coponents/RankList';
+import ParseUser from './lib/ParseUser'
 
 function App() {
   return (
@@ -9,6 +10,7 @@ function App() {
         <img src={logo} className="App-logo" alt="logo" />
 
         <RankList key = "cf-rank"/>
+        {ParseUser()}
       </header>
     </div>
   );
