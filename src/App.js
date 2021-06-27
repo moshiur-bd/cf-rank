@@ -1,12 +1,12 @@
 import './App.css';
 import RankList from './components/RankList'
-import {BrowserRouter, Switch, Route}  from "react-router-dom"
+import {HashRouter, Switch, Route}  from "react-router-dom"
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <BrowserRouter>
+        <HashRouter>
           <div>
             <Switch>
               {/* <Route path="/contest/:contestID" component={RankList} /> */}
@@ -14,7 +14,7 @@ function App() {
               <Route path="/" component={RankList} />
             </Switch>
           </div>
-        </BrowserRouter>
+        </HashRouter>
       </header>
     </div>
   );
