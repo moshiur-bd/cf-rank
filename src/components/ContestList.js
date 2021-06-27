@@ -42,6 +42,7 @@ class ContestList extends React.Component{
          this.state.loading = false
          this.forceUpdate()
      }
+     
 
      render(){
 
@@ -89,12 +90,13 @@ class ContestList extends React.Component{
                 <Table variant="dark" size="sm" responsive="sm" striped="true">
                     <thead>
                         <tr>
+                            <th></th>
                             <th>Contest Tittle</th>
                             <th>Contest ID</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {cf.map((r, i) => <ContestRow key={r.id} data={r} />) }
+                        {cf.map((r, i) => <ContestRow key={r.id + this.state.contestID} data={r} url={this.state.filterUrl} selected={r.id == this.state.contestID}/>) }
                     </tbody>
                 </Table>
             </div>
@@ -114,9 +116,6 @@ class ContestList extends React.Component{
 
     async setRefreshIfNecessary(){
         await this.repeatedWork()
-        if (this.state.needRetry) {
-            this.interval = setInterval(()=>{this.repeatedWork()}, 30000);
-        }
     }
 
      componentDidMount() {
@@ -124,7 +123,7 @@ class ContestList extends React.Component{
      }
      
      componentWillUnmount() {
-         clearInterval(this.interval);
+         //clearInterval(this.interval);
      }
 }
 

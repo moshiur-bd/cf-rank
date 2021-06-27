@@ -1,23 +1,42 @@
 import Input from './Input'
 import { useLocation } from 'react-router';
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Spinner, Table, Form, Col, InputGroup, FormControl, Button, Navbar, Nav} from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 
+const BSMRSTU_ORG_URL = `https://codeforces.com/ratings/organization/3403`
 
 
 
-export default function Navigation({contestID, url}){
-    let location = useLocation()
-    var path = location.pathname
+export default function Navigation(props){
+    var rUrl = BSMRSTU_ORG_URL
+    var rContestID = 1455
 
-    const [sUrl, setUrl] = useState(url)
-    const [sContestID, setContestID] = useState(contestID)
+    try{
+        rUrl = props.location.search.match(`url=(.+)`)[1]
+        rContestID = props.match.params.contestID
+    }
+    catch(e){
+        console.log("error in navigation", e)
+    }
+
+    const [url, setUrl] = useState(rUrl)
+    const [contestID, setContestID] = useState(rContestID)
+
+    // useEffect(() => {
+    //     setUrl(rUrl)
+    //     setContestID(rContestID)
+    //     console.log("set states", url, contestID)
+    // });
+
+    //debugger
+
+    console.log("Nav-props",props)
 
 
     var InputJSX = <div className="input-url">
-        <Form>
+        <Form  key={rUrl+rContestID}>
             <Form.Row className="align-items-center">
                 <Col xs="auto">
                     <Form.Label htmlFor="inlineFormInput" srOnly>
@@ -27,8 +46,9 @@ export default function Navigation({contestID, url}){
                         className="mb-2"
                         id="inlineFormInput"
                         placeholder="city/organization cf url"
-                        defaultValue={url}
+                        defaultValue={rUrl}
                         onChange={e => setUrl(e.target.value)}
+                        // onLoad={e => setUrl(e.target.value)}
                     />
                 </Col>
                 <Col xs="auto">
@@ -42,13 +62,18 @@ export default function Navigation({contestID, url}){
                         <FormControl
                             id="inlineFormInputGroup"
                             placeholder="ContestID"
-                            defaultValue={contestID}
-                            onChange={e => setContestID(e.target.value)}
+                            value={contestID}
+                            onChange={
+                                (e)=> {
+                                    debugger
+                                    setContestID(e.target.value)
+                                }
+                            }
                         />
                     </InputGroup>
                 </Col>
                 <Col xs="auto">
-                    <Link to={"/contest/" + sContestID + "?url=" + sUrl}>
+                    <Link to={"/contest/" + contestID + "?url=" + url}>
                         <Button type="submit" className="mb-2">
                             Load
                         </Button>
@@ -63,8 +88,8 @@ export default function Navigation({contestID, url}){
         <Navbar bg="dark" variant="dark" size="small" >
         {/* <Navbar.Brand href="">Navbar</Navbar.Brand> */}
         <Nav className="mr-auto">
-            <Nav.Link href={"#selector/contests/" + sContestID + "?url="+sUrl} active={path.startsWith("/selector/contests")}>Contests</Nav.Link>
-            <Nav.Link disabled active={path.startsWith("/contest")}>Ranklist</Nav.Link>
+                <Nav.Link href={"#selector/contests/" + contestID + "?url=" + url} active={props.location.pathname.startsWith("/selector/contests")}>Contests</Nav.Link>
+            <Nav.Link disabled active={props.location.pathname.startsWith("/contest")}>Ranklist</Nav.Link>
             {/* <Nav.Link href="#region">Features</Nav.Link> */}
         </Nav>
         {InputJSX}
