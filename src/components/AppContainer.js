@@ -1,7 +1,7 @@
 import RankListLayout from './RankListLayout'
 import ContestListLayout from './ContestListLayout'
 import Navigation from './Navigation'
-import { HashRouter, Switch, Route } from "react-router-dom"
+import { HashRouter, Switch, Route, Redirect } from "react-router-dom"
 import { useState } from 'react'
 
 
@@ -19,7 +19,7 @@ export default function AppContainer(){
                 {/* <Route path="/contest/:contestID" component={RankList} /> */}
                 <Route path="/selector/contests/:contestID" render={(props) => <ContestListLayout {...props} key={Math.random().toString(36)}/>} />
                 <Route path="/contest/:contestID" render={(props) => <RankListLayout {...props} key={Math.random().toString(36)} />} />
-                <Route path="/" component={ContestListLayout} />
+                <Redirect from="/" to="/contest/1541?url=https://codeforces.com/ratings/organization/3403" component={ContestListLayout} />
             </Switch>
         </div>
     </HashRouter>
