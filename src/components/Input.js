@@ -29,7 +29,7 @@ return <div className="input-url">
                 </Form.Label>
                 <InputGroup className="mb-2">
                     <InputGroup.Prepend>
-                        <InputGroup.Text>@</InputGroup.Text>
+                        <InputGroup.Text>@contest-</InputGroup.Text>
                     </InputGroup.Prepend>
                     <FormControl
                         id="inlineFormInputGroup"
