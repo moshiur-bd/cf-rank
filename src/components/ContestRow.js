@@ -10,7 +10,7 @@ export default function ContestRow({data, selected, url}){
     return (<tr>
         {/* <td><input type="checkbox" defaultChecked={this.state.chkbox} onChange={this.handleChangeChk} /></td> */}
         <td><Link to={'/selector/contests/'+data.id+'?url='+url}><input type="radio" defaultChecked={selected} /></Link></td>
-        <td style={{ "text-align": "left" }}>{data.name}</td>
-        <td style={{ "text-align": "left" }}>{data.id}</td>
+        <td textalign="left">{data.name}</td>
+        <td textalign="left">{data.id}</td>
     </tr>)
 }

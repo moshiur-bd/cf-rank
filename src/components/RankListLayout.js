@@ -50,6 +50,7 @@ class RankListLayout extends React.Component {
 
 
     render() {
+        console.log("rank-layout-rendering", this.props)
         return (
             <div>
                 <CommonLayout key={"rank-list-layout" + this.state.url + this.state.contestID} {...this.props} url={this.state.url} contestID={this.state.contestID}>

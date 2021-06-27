@@ -6,7 +6,7 @@ import { useState } from 'react'
 
 
 export default function AppContainer(){
-    return <HashRouter>
+    return <HashRouter key='hash-router'>
         {/* <Switch>
             <Route path="/selector/contests/:contestID" component={Navigation} />
             <Route path="/contest/:contestID" component={Navigation} />
@@ -14,11 +14,11 @@ export default function AppContainer(){
         </Switch>
 
         <Navigation url={url} contestID={contestID}/> */}
-        <div className="Switch-Route-Block">
-            <Switch>
+        <div className="Switch-Route-Block" key='switch-route-block'>
+            <Switch key='switch-route-sw'>
                 {/* <Route path="/contest/:contestID" component={RankList} /> */}
-                <Route path="/selector/contests/:contestID" render={(props) => <ContestListLayout {...props}/>} />
-                <Route path="/contest/:contestID" render={(props) => <RankListLayout {...props}/>} />
+                <Route key='route-contest-list' path="/selector/contests/:contestID" render={(props) => <ContestListLayout key="contest-list-layout" {...props}/>} />
+                <Route key='route-rank-list' path="/contest/:contestID" render={(props) => <RankListLayout key="single-rank-instance" {...props}/>} />
                 <Redirect from="/" to="/contest/1541?url=https://codeforces.com/ratings/organization/3403" component={ContestListLayout} />
             </Switch>
         </div>

@@ -16,7 +16,7 @@ class ContestList extends React.Component{
 
      constructor(props) {
         super(props);
-         this.state = { data: null, contestID: 1541, filterUrl: "", loading:true, needRetry:true, failed:false };
+         this.state = { data: null, loading:true, needRetry:true, failed:false };
      }
 
      async actionFetchContests(gym){
@@ -45,25 +45,11 @@ class ContestList extends React.Component{
      
 
      render(){
+         //debugger
+         if (this.state.data === null){
 
-        try{
-            const { match: { params: { contestID } }, location:{search} } = this.props;
-            var filterUrl = search.match(`url=(.+)`)[1]
-            if (contestID != null && filterUrl != null) {
-                this.state.contestID = contestID
-                this.state.filterUrl = filterUrl
-            }
-            console.log("state set", this.state.contestID, this.state.filterUrl)
-
-         }catch(e){
-             console.log("couldn't read params", e)
-         }
-
-         if (this.state.data == null){
-
-            if (this.state.loading == false){
+            if (this.state.loading === false){
                 return <div>
-                    <Navigation contestID={this.state.contestID} url={this.state.filterUrl} />
                         <div className="stopped">
                         <p>Not Available! </p>
                     </div>
@@ -82,12 +68,10 @@ class ContestList extends React.Component{
             }
         }
 
-
         var cf = this.state.data
-        return <div>
-            {/* <Navigation contestID={this.state.contestID} url={this.state.filterUrl} /> */}
-            <div className="contests">
-                <Table variant="dark" size="sm" responsive="sm" striped="true">
+         return <div key="contests-list-div" >
+            <div className="contests" key="contests-div">
+                <Table key = 'contests-table' variant="dark" size="sm" responsive="sm" striped="true">
                     <thead>
                         <tr>
                             <th></th>
@@ -96,7 +80,7 @@ class ContestList extends React.Component{
                         </tr>
                     </thead>
                     <tbody>
-                        {cf.map((r, i) => <ContestRow key={r.id + this.state.contestID} data={r} url={this.state.filterUrl} selected={r.id == this.state.contestID}/>) }
+                        {cf.map((r, i) => <ContestRow key={i} data={r} url={this.props.url}/>) }
                     </tbody>
                 </Table>
             </div>
@@ -109,6 +93,7 @@ class ContestList extends React.Component{
         return this.actionFetchContests(false)
         .then(
             (data) => {
+                debugger
                 console.log("data", data)
             })
         .catch(e => alert(e))
@@ -119,12 +104,20 @@ class ContestList extends React.Component{
     }
 
      componentDidMount() {
-         this.setRefreshIfNecessary().then()
+        this.setRefreshIfNecessary().then()
      }
      
      componentWillUnmount() {
          //clearInterval(this.interval);
      }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        //debugger
+        if(nextProps != null && ( nextProps.url != this.props.url || nextProps.contestID != this.props.contestID)){
+            return true
+        }
+        return false
+    }
 }
 
 export default ContestList;

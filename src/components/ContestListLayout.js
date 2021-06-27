@@ -6,52 +6,31 @@ const BSMRSTU_ORG_URL = `https://codeforces.com/ratings/organization/3403`
 class ContestListLayout extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { url: BSMRSTU_ORG_URL, contestID:1541 };
     }
 
-    updateStateVars(props){
-        try {
-            this.setState({
-                url : props.location.search.match(`url=(.+)`)[1],
-                contestID : props.match.params.contestID
-            })
+    urlAndContestID(props){
+        return {
+            url: props.location.search.match(`url=(.+)`)[1],
+            contestID : props.match.params.contestID
         }
-        catch (e) {
-            console.log("error setting contest-list-layout state", e)
-        }
-        console.log("con-layout-state", this.state)
-    }
-
-    stateChangedLah(props) {
-        try {
-            if (this.state.url !== props.location.search.match(`url=(.+)`)[1] || this.state.contestID !== props.match.params.contestID){
-                return true
-            }
-            return false
-        }
-        catch (e) {
-            return true
-        }
-    }
-
-    componentDidMount(){
-        this.updateStateVars(this.props)
     }
 
     shouldComponentUpdate(nextProps, nextState){
-        // debugger
-        if(this.stateChangedLah(nextProps)){
-            this.updateStateVars(nextProps)
-            return true
+        var p1 = this.urlAndContestID(nextProps)
+        var p2 = this.urlAndContestID(this.props)
+        if (p1 !== null && p2 !== null && p1.url === p2.url && p1.contestID === p2.contestID){
+            return false
         }
-        return false
+        return true
     }
 
     render() {
+        console.log("con-layout-rendering", this.props)
+
         return (
             <div>
-                <CommonLayout key={"con-list-layout"} {...this.props} url={this.state.url} contestID={this.state.contestID}>
-                    <ContestList key={"con-list-"} {...this.props} url={this.state.url} contestID={this.state.contestID} ></ContestList>
+                <CommonLayout key="con-list-layout" {...this.props}  {...this.urlAndContestID(this.props)}>
+                    <ContestList key="con-list" {...this.props} {...this.urlAndContestID(this.props)}></ContestList>
                 </CommonLayout>
             </div>
         );
