@@ -1,29 +1,28 @@
 import { Spinner, Table, Form, Col, InputGroup, FormControl, Button } from 'react-bootstrap'
-import RankRow from "./RankRow"
+import ContestRow from "./ContestRow"
 import Navigation from "./Navigation"
-import React from 'react'
+import React, { useDebugValue } from 'react'
 import ParseCFUsersFromURL from "../lib/ParseUser"
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './RankList.css';
+import './ContestList.css';
 import logo from '../logo.svg';
 
 
 
 const CF_API = "https://codeforces.com/api"
-const CF_STANDING_URL = (id) => `/contest.standings?contestId=`+id+`&handles=`
+const CF_CONTESTS_URL = (gym) =>  `/contest.list?gym=`+gym
 
-
- class RankList extends React.Component{
+class ContestList extends React.Component{
 
      constructor(props) {
         super(props);
          this.state = { data: null, contestID: 1541, filterUrl: "", loading:true, needRetry:true, failed:false };
      }
 
-     async actionFetchRanks(users){
+     async actionFetchContests(gym){
          var errored = false
-         const url = CF_API + CF_STANDING_URL(this.state.contestID) + users
-         console.log("Fetching", url)
+         const url = CF_API + CF_CONTESTS_URL(gym)
+         console.log("Fetching Contests", url)
          const resp = await fetch(url).
              catch(err => {
                  console.log(err);
@@ -37,13 +36,8 @@ const CF_STANDING_URL = (id) => `/contest.standings?contestId=`+id+`&handles=`
 
          if (resp.status === 200) {
              this.state.data = (await resp.json()).result
-             if (this.state.data.contest.phase == "FINISHED") {
-                 this.state.needRetry = false
-             } else {
-                 this.state.needRetry = true
-             }
          } else {
-            this.state.needRetry = false
+
         }
          this.state.loading = false
          this.forceUpdate()
@@ -68,12 +62,8 @@ const CF_STANDING_URL = (id) => `/contest.standings?contestId=`+id+`&handles=`
 
             if (this.state.loading == false){
                 return <div>
-                    {/* <Navigation contestID={this.state.contestID} url={this.state.filterUrl} /> */}
+                    <Navigation contestID={this.state.contestID} url={this.state.filterUrl} />
                         <div className="stopped">
-
-                        {/* <Spinner style={{ width: "100px", height: "100px" }} animation="border" role="status">
-                            <span className="sr-only">Loading...</span>
-                        </Spinner> */}
                         <p>Not Available! </p>
                     </div>
                 </div>
@@ -82,11 +72,10 @@ const CF_STANDING_URL = (id) => `/contest.standings?contestId=`+id+`&handles=`
                 return <div>
                     {/* <Navigation contestID={this.state.contestID} url={this.state.filterUrl}/> */}
                     <div className="loading">
-
                         <Spinner style={{ width: "100px", height: "100px" }} animation="border" role="status">
                             <span className="sr-only">Loading...</span>
                         </Spinner>
-                        <p>Constructing Ranklist...</p>
+                        <p>Parsing Contests...</p>
                     </div>
                 </div>
             }
@@ -96,27 +85,16 @@ const CF_STANDING_URL = (id) => `/contest.standings?contestId=`+id+`&handles=`
         var cf = this.state.data
         return <div>
             {/* <Navigation contestID={this.state.contestID} url={this.state.filterUrl} /> */}
-            {cf.contest.phase == "FINISHED" && <img src={logo} className="App-logo" alt="logo" />}
-            {cf.contest.phase != "FINISHED" && <img src={logo} className="App-logo-animate" alt="logo" />}
-
-            <div className="con-tittle">
-                {cf.contest.name}
-            </div>
-
-            <div className="ranklist">
+            <div className="contests">
                 <Table variant="dark" size="sm" responsive="sm" striped="true">
                     <thead>
                         <tr>
-                            <th style={{ "text-align": "left" }}>#</th>
-                            <th style={{ "text-align": "left" }}>Rank</th>
-                            <th style={{ "text-align": "left" }}>Handle</th>
-                            <th >Points</th>
-                            <th style={{ "text-align": "left"}}> </th>
-                            {cf.problems.map(p => <th>{p.index}</th>)}
+                            <th>Contest Tittle</th>
+                            <th>Contest ID</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {cf.rows.map((r, i) => <RankRow key={i} rowid={i + 1} data={r} />) }
+                        {cf.map((r, i) => <ContestRow key={r.id} data={r} />) }
                     </tbody>
                 </Table>
             </div>
@@ -126,11 +104,10 @@ const CF_STANDING_URL = (id) => `/contest.standings?contestId=`+id+`&handles=`
 
     async repeatedWork() {
         this.state.loading = true
-        return ParseCFUsersFromURL(this.state.filterUrl)
+        return this.actionFetchContests(false)
         .then(
-            (users) => {
-                console.log("users", users)
-                return this.actionFetchRanks(users)
+            (data) => {
+                console.log("data", data)
             })
         .catch(e => alert(e))
     }
@@ -149,15 +126,7 @@ const CF_STANDING_URL = (id) => `/contest.standings?contestId=`+id+`&handles=`
      componentWillUnmount() {
          clearInterval(this.interval);
      }
-//      componentDidUpdate(prevProps, prevState, snapshot) {
-//     //      debugger
-//     //      // Check to see if the "applied" flag got changed (NOT just "set")
-//     //      if (this.props.location.state.applied && !prevProps.location.state.applied) {
-//     //          this.state = { data: null, contestID: 1541, filterUrl: BSMRSTU_ORG_URL, loading: true, needRetry: true, failed: false }
-//     //          this.forceUpdate()
-//     //      }
-//     //  }
 }
 
-export default RankList;
+export default ContestList;
 
