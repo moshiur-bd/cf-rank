@@ -50,8 +50,8 @@ class ContestListLayout extends React.Component {
     render() {
         return (
             <div>
-                <CommonLayout key={"con-list-layout"+this.state.url+this.state.contestID} {...this.props} url={this.state.url} contestID={this.state.contestID}>
-                    <ContestList key={"con-list-"+this.state.url+this.state.contestID} {...this.props} url={this.state.url} contestID={this.state.contestID} ></ContestList>
+                <CommonLayout key={"con-list-layout"} {...this.props} url={this.state.url} contestID={this.state.contestID}>
+                    <ContestList key={"con-list-"} {...this.props} url={this.state.url} contestID={this.state.contestID} ></ContestList>
                 </CommonLayout>
             </div>
         );

@@ -17,8 +17,8 @@ export default function AppContainer(){
         <div className="Switch-Route-Block">
             <Switch>
                 {/* <Route path="/contest/:contestID" component={RankList} /> */}
-                <Route path="/selector/contests/:contestID" render={(props) => <ContestListLayout {...props} key={Math.random().toString(36)}/>} />
-                <Route path="/contest/:contestID" render={(props) => <RankListLayout {...props} key={Math.random().toString(36)} />} />
+                <Route path="/selector/contests/:contestID" render={(props) => <ContestListLayout {...props}/>} />
+                <Route path="/contest/:contestID" render={(props) => <RankListLayout {...props}/>} />
                 <Redirect from="/" to="/contest/1541?url=https://codeforces.com/ratings/organization/3403" component={ContestListLayout} />
             </Switch>
         </div>
