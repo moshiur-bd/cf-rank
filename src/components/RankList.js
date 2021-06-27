@@ -1,7 +1,8 @@
+import { Spinner, Table, Form, Col, InputGroup, FormControl, Button } from 'react-bootstrap'
 import RankRow from "./RankRow"
+import Input from "./Input"
 import React from 'react'
 import ParseCFUsersFromURL from "../lib/ParseUser"
-import { Spinner, Table, Form, Col, InputGroup, FormControl, Button} from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './RankList.css';
 import logo from '../logo.svg';
@@ -49,44 +50,6 @@ const BSMRSTU_ORG_URL = `https://codeforces.com/ratings/organization/3403`
          this.forceUpdate()
      }
 
-
-    // InputJSX = <div className="input-url">
-    //      <Form>
-    //          <Form.Row className="align-items-center">
-    //              <Col xs="auto">
-    //                  <Form.Label htmlFor="inlineFormInput" srOnly>
-    //                      URL
-    //                  </Form.Label>
-    //                  <FormControl
-    //                      className="mb-2"
-    //                      id="inlineFormInput"
-    //                      placeholder="city/organization cf url"
-    //                  />
-    //              </Col>
-    //              <Col xs="auto">
-    //                  <Form.Label htmlFor="inlineFormInputGroup" srOnly>
-    //                      ContestID
-    //                  </Form.Label>
-    //                  <InputGroup className="mb-2">
-    //                      <InputGroup.Prepend>
-    //                          <InputGroup.Text>@</InputGroup.Text>
-    //                      </InputGroup.Prepend>
-    //                      <FormControl
-    //                          id="inlineFormInputGroup"
-    //                          placeholder={"this.state.contestID"}
-                            
-    //                          />
-    //                  </InputGroup>
-    //              </Col>
-    //              <Col xs="auto">
-    //                  <Button type="submit" className="mb-2">
-    //                      Fetch
-    //                  </Button>
-    //              </Col>
-    //          </Form.Row>
-    //      </Form>
-    //  </div>
-
      render(){
         try{
             const { match: { params: { contestID } }, location:{search} } = this.props;
@@ -100,51 +63,13 @@ const BSMRSTU_ORG_URL = `https://codeforces.com/ratings/organization/3403`
          }catch(e){
              console.log("couldn't read params", e)
          }
-         
-         const InputJSX = <div className="input-url">
-             <Form>
-                 <Form.Row className="align-items-center">
-                     <Col xs="auto">
-                         <Form.Label htmlFor="inlineFormInput" srOnly>
-                             URL
-                         </Form.Label>
-                         <FormControl
-                             className="mb-2"
-                             id="inlineFormInput"
-                             placeholder="city/organization cf url"
-                         />
-                     </Col>
-                     <Col xs="auto">
-                         <Form.Label htmlFor="inlineFormInputGroup" srOnly>
-                             ContestID
-                         </Form.Label>
-                         <InputGroup className="mb-2">
-                             <InputGroup.Prepend>
-                                 <InputGroup.Text>@</InputGroup.Text>
-                             </InputGroup.Prepend>
-                             <FormControl
-                                 id="inlineFormInputGroup"
-                                 placeholder={"this.state.contestID"}
-
-                             />
-                         </InputGroup>
-                     </Col>
-                     <Col xs="auto">
-                         <Button type="submit" className="mb-2">
-                             Fetch
-                         </Button>
-                     </Col>
-                 </Form.Row>
-             </Form>
-         </div>
-
 
          if (this.state.data == null){
 
             if (this.state.loading == false){
                 return <div>
-                    {InputJSX}
-                    <div className="stopped">
+                    <Input contestID={this.state.contestID} url={this.state.filterUrl} />
+                        <div className="stopped">
 
                         {/* <Spinner style={{ width: "100px", height: "100px" }} animation="border" role="status">
                             <span className="sr-only">Loading...</span>
@@ -155,7 +80,7 @@ const BSMRSTU_ORG_URL = `https://codeforces.com/ratings/organization/3403`
 
             } else {
                 return <div>
-                    {InputJSX}
+                    <Input contestID={this.state.contestID} url={this.state.filterUrl}/>
                     <div className="loading">
 
                         <Spinner style={{ width: "100px", height: "100px" }} animation="border" role="status">
@@ -165,16 +90,12 @@ const BSMRSTU_ORG_URL = `https://codeforces.com/ratings/organization/3403`
                     </div>
                 </div>
             }
-
-
         }
-
-
 
 
         var cf = this.state.data
         return <div>
-            {InputJSX}
+            <Input contestID={this.state.contestID} url={this.state.filterUrl} />
             {cf.contest.phase == "FINISHED" && <img src={logo} className="App-logo" alt="logo" />}
             {cf.contest.phase != "FINISHED" && <img src={logo} className="App-logo-animate" alt="logo" />}
 
@@ -228,6 +149,14 @@ const BSMRSTU_ORG_URL = `https://codeforces.com/ratings/organization/3403`
      componentWillUnmount() {
          clearInterval(this.interval);
      }
+//      componentDidUpdate(prevProps, prevState, snapshot) {
+//     //      debugger
+//     //      // Check to see if the "applied" flag got changed (NOT just "set")
+//     //      if (this.props.location.state.applied && !prevProps.location.state.applied) {
+//     //          this.state = { data: null, contestID: 1541, filterUrl: BSMRSTU_ORG_URL, loading: true, needRetry: true, failed: false }
+//     //          this.forceUpdate()
+//     //      }
+//     //  }
 }
 
 export default RankList;
