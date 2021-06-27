@@ -1,8 +1,16 @@
-# Getting Started with Create React App
+# Codeforces Awesome Rank
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project provides a cool ranklist for codesforces contest.
 
-## Available Scripts
+## Live at
+https://moshiur-bd.github.io/cf-rank
+
+## Features
+- live ranklist (will be updated automatically if contest is running)
+- provides country, city, organization level ranklist
+
+
+## Developer Guide
 
 In the project directory, you can run:
 
