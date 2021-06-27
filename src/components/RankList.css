@@ -7,9 +7,16 @@
 .con-tittle{
     padding: 10px;
 }
+
+.input-url{
+    margin: 1% 5%;
+}
+
 .ranklist{
     margin: 1% 5%;
 }
+
+
 .loading{
   display: flex;
   flex-direction: column;

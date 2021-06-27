@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function Row({data, rowID}){
+export default function RankRow({data, rowid}){
     const items = []
     //debugger;
     if(data == null) {
@@ -8,7 +8,7 @@ export default function Row({data, rowID}){
     }
 
     return (<tr>
-        <td style={{ "text-align": "left" }}>{rowID}</td>
+        <td style={{ "text-align": "left" }}>{rowid}</td>
         <td style={{ "text-align": "left" }}>{data.rank}</td>
         <td style={{ "text-align": "left" }}>{data.party.members.map(m => m.handle + " ")}</td>
         <td >{data.points}</td>
