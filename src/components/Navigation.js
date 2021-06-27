@@ -5,32 +5,17 @@ import { useState, useEffect } from 'react'
 import { Spinner, Table, Form, Col, InputGroup, FormControl, Button, Navbar, Nav} from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 
-const BSMRSTU_ORG_URL = `https://codeforces.com/ratings/organization/3403`
 
 
 
 export default function Navigation(props){
-    var rUrl = BSMRSTU_ORG_URL
-    var rContestID = 1455
+    var rUrl = props.url
+    var rContestID = props.contestID
 
-    try{
-        rUrl = props.location.search.match(`url=(.+)`)[1]
-        rContestID = props.match.params.contestID
-    }
-    catch(e){
-        console.log("error in navigation", e)
-    }
 
     const [url, setUrl] = useState(rUrl)
     const [contestID, setContestID] = useState(rContestID)
 
-    // useEffect(() => {
-    //     setUrl(rUrl)
-    //     setContestID(rContestID)
-    //     console.log("set states", url, contestID)
-    // });
-
-    //debugger
 
     console.log("Nav-props",props)
 

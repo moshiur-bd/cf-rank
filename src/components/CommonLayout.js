@@ -7,7 +7,7 @@ class CommonLayout extends React.Component {
         return (
             <div>
                 <div className="layout-header">
-                    <Navigation {...this.props}/>
+                    <Navigation {...this.props} />
                 </div>
                 <div className="App-Container">
                     {this.props.children}
