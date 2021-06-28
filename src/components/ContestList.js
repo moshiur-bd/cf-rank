@@ -12,11 +12,22 @@ import logo from '../logo.svg';
 const CF_API = "https://codeforces.com/api"
 const CF_CONTESTS_URL = (gym) =>  `/contest.list?gym=`+gym
 
+
+
+function RowConatiner({ searchStr, children}){
+    return React.Children.toArray(children).filter( (child) =>{
+        return !searchStr || searchStr == "" || child.props.data.name.toLowerCase().includes(searchStr.toLowerCase())
+    })
+}
+
+
 class ContestList extends React.Component{
+    selectRef = []
+    refID = {}
 
      constructor(props) {
         super(props);
-         this.state = { data: null, loading:true, needRetry:true, failed:false };
+         this.state = { data: null, loading: true, needRetry: true, failed: false, searchStr:"" };
      }
 
      async actionFetchContests(gym){
@@ -45,7 +56,6 @@ class ContestList extends React.Component{
      
 
      render(){
-         //debugger
          if (this.state.data === null){
 
             if (this.state.loading === false){
@@ -57,7 +67,6 @@ class ContestList extends React.Component{
 
             } else {
                 return <div>
-                    {/* <Navigation contestID={this.state.contestID} url={this.state.filterUrl}/> */}
                     <div className="loading">
                         <Spinner style={{ width: "100px", height: "100px" }} animation="border" role="status">
                             <span className="sr-only">Loading...</span>
@@ -74,13 +83,27 @@ class ContestList extends React.Component{
                 <Table key = 'contests-table' variant="dark" size="sm" responsive="sm" striped="true">
                     <thead>
                         <tr>
-                            <th></th>
+                            <th><FormControl autoFocus
+                                 className="mx-3 my-2 w-auto"
+                                 placeholder="Type to filter..." defaultValue={this.state.searchStr} onChange={(e) => this.setState({searchStr: e.target.value})}></FormControl></th>
                             <th>Contest Tittle</th>
                             <th>Contest ID</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {cf.map((r, i) => <ContestRow key={i} data={r} url={this.props.url}/>) }
+                         <RowConatiner key={"search-str" +this.state.searchStr} searchStr={this.state.searchStr}>
+                             {cf.map((r, i) =>{
+                                
+                                if (!(r.id in this.refID)){
+                                    this.selectRef.push(React.createRef())
+                                    this.refID[r.id] = this.selectRef.length - 1                                    
+                                }
+                                
+                                
+                                var elm = <ContestRow ref={this.selectRef[this.refID[r.id]]} key={i} data={r} url={this.props.url} selected={r.id == this.props.contestID}/>
+                                return elm
+                                })}
+                        </RowConatiner>
                     </tbody>
                 </Table>
             </div>
@@ -93,8 +116,7 @@ class ContestList extends React.Component{
         return this.actionFetchContests(false)
         .then(
             (data) => {
-                debugger
-                console.log("data", data)
+                console.log("contests-data", data)
             })
         .catch(e => alert(e))
     }
@@ -112,8 +134,16 @@ class ContestList extends React.Component{
      }
 
     shouldComponentUpdate(nextProps, nextState) {
-        //debugger
         if(nextProps != null && ( nextProps.url != this.props.url || nextProps.contestID != this.props.contestID)){
+            try {
+                this.selectRef[this.refID[Number(nextProps.contestID)]].current.innerText = "SELECTED"
+                this.selectRef[this.refID[Number(this.props.contestID)]].current.innerText = "select"
+            } catch(e){ // may fail due to filter 
+
+            }
+            return false
+        }
+        if(nextState && nextState.searchStr != this.state.searchStr){
             return true
         }
         return false
