@@ -85,7 +85,13 @@ class ContestList extends React.Component{
                         <tr>
                             <th><FormControl autoFocus
                                  className="mx-3 my-2 w-auto"
-                                 placeholder="Type to filter..." defaultValue={this.state.searchStr} onChange={(e) => this.setState({searchStr: e.target.value})}></FormControl></th>
+                                 placeholder="Type to filter..." defaultValue={this.state.searchStr} 
+                                 onMouseMove={(e) => {
+                                     if(this.state.searchStr != e.target.value){
+                                        return this.setState({searchStr: e.target.value})
+                                     }
+                                    }} 
+                                ></FormControl></th>
                             <th>Contest Tittle</th>
                             <th>Contest ID</th>
                         </tr>
