@@ -1,7 +1,7 @@
 
-.ranklist td{
-    padding-left: 10px;
-    padding-right: 10px;
+.table-sm td, .table-sm th {
+    padding-left: 1px;
+    padding-right: 1px;
 }
 
 .con-tittle{

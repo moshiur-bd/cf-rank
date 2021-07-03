@@ -1,0 +1,30 @@
+.cell-points{
+    margin: 0;
+    padding: 0;
+    align-items: center;
+    display: block;
+    font-size: 80%;
+}
+
+.cell-rejected{
+    margin: 0;
+    padding: 0;
+    min-width: 20px;
+    padding-left: 3px;
+    color: peru;
+    font-size: 90%;
+    display: inline;
+}
+
+.cell-time{
+    margin: 0;
+    padding: 0;
+    align-items: center;
+    display: block;
+    font-size: 50%;
+    color: grey;
+}
+
+.rank-font{
+    font-size: 80%;
+}

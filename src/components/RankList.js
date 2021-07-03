@@ -68,21 +68,15 @@ const CF_STANDING_URL = (id) => `/contest.standings?contestId=`+id+`&handles=`
 
             if (this.state.loading == false){
                 return <div>
-                    {/* <Navigation contestID={this.state.contestID} url={this.state.filterUrl} /> */}
                         <div className="stopped">
-
-                        {/* <Spinner style={{ width: "100px", height: "100px" }} animation="border" role="status">
-                            <span className="sr-only">Loading...</span>
-                        </Spinner> */}
+                        <br/><br/><br/>
                         <p>Not Available! </p>
                     </div>
                 </div>
 
             } else {
                 return <div>
-                    {/* <Navigation contestID={this.state.contestID} url={this.state.filterUrl}/> */}
                     <div className="loading">
-
                         <Spinner style={{ width: "100px", height: "100px" }} animation="border" role="status">
                             <span className="sr-only">Loading...</span>
                         </Spinner>
@@ -95,7 +89,6 @@ const CF_STANDING_URL = (id) => `/contest.standings?contestId=`+id+`&handles=`
 
         var cf = this.state.data
         return <div>
-            {/* <Navigation contestID={this.state.contestID} url={this.state.filterUrl} /> */}
             {cf.contest.phase == "FINISHED" && <img src={logo} className="App-logo" alt="logo" />}
             {cf.contest.phase != "FINISHED" && <img src={logo} className="App-logo-animate" alt="logo" />}
 
@@ -104,11 +97,11 @@ const CF_STANDING_URL = (id) => `/contest.standings?contestId=`+id+`&handles=`
             </div>
 
             <div className="ranklist">
-                <Table variant="dark" size="sm" responsive="sm" striped="true">
+                <Table variant="dark" size="sm" responsive="sm" striped bordered>
                     <thead>
                         <tr>
                             <th style={{ "text-align": "left" }}>#</th>
-                            <th style={{ "text-align": "left" }}>Rank</th>
+                            <th style={{ "text-align": "center" }}>Rank</th>
                             <th style={{ "text-align": "left" }}>Handle</th>
                             <th >Points</th>
                             <th style={{ "text-align": "left"}}> </th>

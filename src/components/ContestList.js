@@ -96,11 +96,8 @@ class ContestList extends React.Component{
                                      }
                                     }} 
                                 ></FormControl></th>
-
-
-
                         </tr>
-                        
+
                     </thead>
                     <tbody>
                          <RowConatiner key={"search-str" +this.state.searchStr} searchStr={this.state.searchStr}>
