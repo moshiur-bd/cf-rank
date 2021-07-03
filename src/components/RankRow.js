@@ -9,7 +9,7 @@ export default function RankRow({data, rowid}){
     }
 
     return (<tr className="rank-font">
-        <td style={{ "text-align": "left" }}>{rowid}</td>
+        <td style={{ "text-align": "left" }}><span className="hash-rank" >{rowid}</span></td>
         <td style={{ "text-align": "center" }}>{data.rank}</td>
         <td style={{ "text-align": "left" }}>{data.party.members.map(m => m.handle + " ")}</td>
         <td >{data.points}</td>

@@ -94,7 +94,7 @@ const CF_STANDING_URL = (id) => `/contest.standings?contestId=`+id+`&handles=`
                 <Table variant="dark" size="sm" responsive="sm" striped bordered>
                     <thead>
                         <tr>
-                            <th style={{ "text-align": "left" }}>#</th>
+                            <th style={{ "text-align": "left" }}><span className="hash-rank" >#</span></th>
                             <th style={{ "text-align": "center" }}>Rank</th>
                             <th style={{ "text-align": "left" }}>Handle</th>
                             <th >Points</th>
