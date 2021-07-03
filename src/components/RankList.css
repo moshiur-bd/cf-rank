@@ -1,7 +1,6 @@
 
 .table-sm td, .table-sm th {
-    padding-left: 1px;
-    padding-right: 1px;
+    padding: 0px 1px;
 }
 
 .con-tittle{
