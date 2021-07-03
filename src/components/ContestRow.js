@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import React from 'react';
 import { ToggleButton } from 'react-bootstrap';
+import {BuildUrl} from "../lib/UrlInfo"
 
 class ContestRow extends React.Component {
     constructor(props) {
@@ -23,7 +24,7 @@ class ContestRow extends React.Component {
         return (<tr>
             <td textalign="left">{data.name}</td>
             <td textalign="left">{data.id}</td>
-            <td ><Link to={'/selector/contests/' + data.id + '?url=' + this.props.url}><p ref={this.props.innerRef} >{this.props.selected ? "SELECTED" : "select"}</p></Link></td>
+            <td ><Link to={BuildUrl('/selector/contests/', data.id, this.props.url, this.props.handles)}><p ref={this.props.innerRef} >{this.props.selected ? "SELECTED" : "select"}</p></Link></td>
         </tr>
         )
     }
