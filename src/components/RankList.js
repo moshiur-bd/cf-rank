@@ -12,50 +12,51 @@ import logo from '../logo.svg';
 const CF_API = "https://codeforces.com/api"
 const CF_STANDING_URL = (id) => `/contest.standings?contestId=`+id+`&handles=`
 
+const CONTEST_FINISHED = "FINISHED"
+
 
  class RankList extends React.Component{
      _isMounted = false
 
-     constructor(props) {
-        super(props);
-        debugger
-         this.state = { data: null, loading:true, needRetry:true, failed:false, handles: this.props.handles, handlesParsed:"", renderCount: 0 };
-     }
+    constructor(props) {
+    super(props);
+        this.state = { data: null, loading:true, needRetry:true, failed:false, handles: this.props.handles, handlesParsed:"", renderCount: 0 };
+    }
 
-     async actionFetchRanks(users){
-         var errored = false
-         const url = CF_API + CF_STANDING_URL(this.props.contestID) + users
-         console.log("Fetching", url)
-         const resp = await fetch(url).
-             catch(err => {
-                 console.log(err);
-                 errored = true
-                 return
-             });
+    async actionFetchRanks(users){
+        var errored = false
+        const url = CF_API + CF_STANDING_URL(this.props.contestID) + users
+        console.log("Fetching", url)
+        const resp = await fetch(url).
+            catch(err => {
+                console.log(err);
+                errored = true
+                return
+            });
 
-         if (errored) {
-             return
-         }
+        if (errored) {
+            return
+        }
 
-         if (resp.status === 200) {
-             this.state.data = (await resp.json()).result
-             if (this.state.data.contest.phase == "FINISHED") {
-                 this.state.needRetry = false
-             } else {
-                 this.state.needRetry = true
-             }
-         } else {
+        if (resp.status === 200) {
+            this.state.data = (await resp.json()).result
+            if (this.state.data.contest.phase == CONTEST_FINISHED) {
+                this.state.needRetry = false
+            } else {
+                this.state.needRetry = true
+            }
+        } else {
             this.state.needRetry = false
         }
-        
+    
         this.state.loading = false
         if(this._isMounted){
             this.setState({
                 renderCount:this.state.renderCount + 1
             })
         }
-         //this.forceUpdate()
-     }
+        //this.forceUpdate()
+    }
 
      render(){
          if (this.state.data == null){
@@ -83,8 +84,8 @@ const CF_STANDING_URL = (id) => `/contest.standings?contestId=`+id+`&handles=`
 
         var cf = this.state.data
         return <div>
-            {cf.contest.phase == "FINISHED" && <img src={logo} className="App-logo" alt="logo" />}
-            {cf.contest.phase != "FINISHED" && <img src={logo} className="App-logo-animate" alt="logo" />}
+            {cf.contest.phase === CONTEST_FINISHED && <img src={logo} className="App-logo" alt="logo" />}
+            {cf.contest.phase !== CONTEST_FINISHED && <img src={logo} className="App-logo-animate" alt="logo" />}
 
             <div className="con-tittle">
                 {cf.contest.name}
@@ -111,12 +112,12 @@ const CF_STANDING_URL = (id) => `/contest.standings?contestId=`+id+`&handles=`
      }
 
 
-    async resolveHandles() {
+    async parseHandles() {
         this.state.loading = true
         return ParseCFUsersFromURL(this.props.url)
         .then(
             (users) => {
-                console.log("users", users)
+                console.log("parsed-users", users)
                 this.setState({
                     handlesParsed:users
                 })
@@ -127,10 +128,13 @@ const CF_STANDING_URL = (id) => `/contest.standings?contestId=`+id+`&handles=`
         if(this.state.handles !== "") {
             this.actionFetchRanks(this.state.handles)
         }
-        await this.resolveHandles()
+        await this.parseHandles()
         if (this.state.needRetry) {
-            this.interval = setInterval(() => { this.resolveHandles()}, 60000);
-            this.interval = setInterval(() => { this.actionFetchRanks(this.state.handles + this.state.handlesParsed) }, 30000);
+            debugger
+            if(this.props.url !== ""){
+                this.parseHandlesInterval = setInterval(() => { this.parseHandles()}, 60000);
+            }
+            this.parseRankInterval = setInterval(() => { this.actionFetchRanks(this.state.handles + this.state.handlesParsed) }, 30000);
             debugger
         }
     }
