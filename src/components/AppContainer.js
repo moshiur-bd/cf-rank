@@ -7,13 +7,6 @@ import { useState } from 'react'
 
 export default function AppContainer(){
     return <HashRouter key='hash-router'>
-        {/* <Switch>
-            <Route path="/selector/contests/:contestID" component={Navigation} />
-            <Route path="/contest/:contestID" component={Navigation} />
-            <Route path="/" component={Navigation} />
-        </Switch>
-
-        <Navigation url={url} contestID={contestID}/> */}
         <div className="Switch-Route-Block" key='switch-route-block'>
             <Switch key='switch-route-sw'>
                 {/* <Route path="/contest/:contestID" component={RankList} /> */}

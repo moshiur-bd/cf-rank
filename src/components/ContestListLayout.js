@@ -5,10 +5,6 @@ import React from 'react'
 const BSMRSTU_ORG_URL = `https://codeforces.com/ratings/organization/3403`
 
 class ContestListLayout extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
     shouldComponentUpdate(nextProps, nextState){
         return !SameUrl(nextProps, this.props)
     }
