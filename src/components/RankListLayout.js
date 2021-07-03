@@ -13,11 +13,11 @@ class RankListLayout extends React.Component {
 
     render() {
         console.log("rank-layout-rendering", this.props)
-        const {url, contestID} = UrlInfo(this.props) 
+        const {url, contestID, handles} = UrlInfo(this.props) 
         return (
             <div>
                 <CommonLayout key="rank-list-layout" {...this.props}  {...UrlInfo(this.props)}>
-                    <RankList key={"rank-list" + url + contestID} {...this.props} {...UrlInfo(this.props)}></RankList>
+                    <RankList key={"rank-list" + url + contestID + handles} {...this.props} {...UrlInfo(this.props)}></RankList>
                 </CommonLayout>
             </div>
         );

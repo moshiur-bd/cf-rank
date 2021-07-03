@@ -18,7 +18,8 @@ const CF_STANDING_URL = (id) => `/contest.standings?contestId=`+id+`&handles=`
 
      constructor(props) {
         super(props);
-         this.state = { data: null, loading:true, needRetry:true, failed:false, handles:"", renderCount: 0 };
+        debugger
+         this.state = { data: null, loading:true, needRetry:true, failed:false, handles: this.props.handles, handlesParsed:"", renderCount: 0 };
      }
 
      async actionFetchRanks(users){
@@ -117,16 +118,20 @@ const CF_STANDING_URL = (id) => `/contest.standings?contestId=`+id+`&handles=`
             (users) => {
                 console.log("users", users)
                 this.setState({
-                    handles:users
+                    handlesParsed:users
                 })
             })
     }
 
     async setRefreshIfNecessary(){
+        if(this.state.handles !== "") {
+            this.actionFetchRanks(this.state.handles)
+        }
         await this.resolveHandles()
         if (this.state.needRetry) {
             this.interval = setInterval(() => { this.resolveHandles()}, 60000);
-            this.interval = setInterval(() => { this.actionFetchRanks(this.state.handles) }, 30000);
+            this.interval = setInterval(() => { this.actionFetchRanks(this.state.handles + this.state.handlesParsed) }, 30000);
+            debugger
         }
     }
 
@@ -145,8 +150,8 @@ const CF_STANDING_URL = (id) => `/contest.standings?contestId=`+id+`&handles=`
          if (nextState.renderCount != this.state.renderCount) {
              return true
          }
-         if (nextState.handles != this.state.handles) {
-             this.actionFetchRanks(nextState.handles)
+         if (nextState.handles != this.state.handles || nextState.handlesParsed != this.state.handlesParsed) {
+             this.actionFetchRanks(nextState.handles + nextState.handlesParsed)
              return false
          }
          return false
