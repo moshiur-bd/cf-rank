@@ -1,0 +1,11 @@
+.contestID-field{
+    max-width: 8vw;
+    min-width: 50px;
+}
+
+.org-field{
+    max-width: 50vw;
+    min-width: 0;
+    width: auto;
+    display: inline;
+}

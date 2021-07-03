@@ -4,6 +4,7 @@ import { useLocation } from 'react-router';
 import { useState, useEffect } from 'react'
 import { Spinner, Table, Form, Col, InputGroup, FormControl, Button, Navbar, Nav} from 'react-bootstrap'
 import { Link } from 'react-router-dom'
+import "./Navigation.css"
 
 
 
@@ -28,7 +29,8 @@ export default function Navigation(props){
                         URL
                     </Form.Label>
                     <FormControl
-                        className="mb-2"
+                        size="sm"
+                        className="mb-0 org-field"
                         id="inlineFormInput"
                         placeholder="city/organization cf url"
                         defaultValue={rUrl}
@@ -37,14 +39,33 @@ export default function Navigation(props){
                     />
                 </Col>
                 <Col xs="auto">
+                    <Form.Label htmlFor="inlineFormInput2" srOnly>
+                        ContestID
+                    </Form.Label>
+                    <FormControl
+                        size="sm"
+                        className="mb-0 contestID-field"
+                        id="inlineFormInput2"
+                        placeholder="ContestID"
+                        value={contestID}
+                        onChange={
+                            (e) => {
+                                debugger
+                                setContestID(e.target.value)
+                            }
+                        }
+                    />
+                </Col>
+                {/* <Col xs="auto" >
                     <Form.Label htmlFor="inlineFormInputGroup" srOnly>
                         ContestID
                     </Form.Label>
-                    <InputGroup className="mb-2">
-                        <InputGroup.Prepend>
-                            <InputGroup.Text>@contest-</InputGroup.Text>
+                    <InputGroup className="mb-2 contestID-field" size="sm">
+                        <InputGroup.Prepend size="sm">
+                            <InputGroup.Text size="sm">@</InputGroup.Text>
                         </InputGroup.Prepend>
                         <FormControl
+                            size="sm"
                             id="inlineFormInputGroup"
                             placeholder="ContestID"
                             value={contestID}
@@ -56,10 +77,10 @@ export default function Navigation(props){
                             }
                         />
                     </InputGroup>
-                </Col>
+                </Col> */}
                 <Col xs="auto">
                     <Link to={"/contest/" + contestID + "?url=" + url}>
-                        <Button type="submit" className="mb-2">
+                        <Button type="submit" className="mb-0 btn-light" size="sm">
                             Load
                         </Button>
                     </Link>
@@ -70,7 +91,7 @@ export default function Navigation(props){
 
     
     return <div>
-        <Navbar bg="dark" variant="dark" size="small" >
+        <Navbar bg="dark" variant="dark" className='navbar-expand-sm'>
         {/* <Navbar.Brand href="">Navbar</Navbar.Brand> */}
         <Nav className="mr-auto">
                 <Nav.Link href={"#selector/contests/" + contestID + "?url=" + url} active={props.location.pathname.startsWith("/selector/contests")}>Contests</Nav.Link>
