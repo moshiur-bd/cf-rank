@@ -1,6 +1,6 @@
 import { Spinner, Table, Form, Col, InputGroup, FormControl, Button } from 'react-bootstrap'
 import RankRow from "./RankRow"
-import Input from "./Input"
+import Navigation from "./Navigation"
 import React from 'react'
 import ParseCFUsersFromURL from "../lib/ParseUser"
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -12,13 +12,12 @@ import logo from '../logo.svg';
 const CF_API = "https://codeforces.com/api"
 const CF_STANDING_URL = (id) => `/contest.standings?contestId=`+id+`&handles=`
 
-const BSMRSTU_ORG_URL = `https://codeforces.com/ratings/organization/3403`
 
  class RankList extends React.Component{
 
      constructor(props) {
         super(props);
-         this.state = { data: null, contestID: 1541, filterUrl: BSMRSTU_ORG_URL, loading:true, needRetry:true, failed:false };
+         this.state = { data: null, contestID: 1541, filterUrl: "", loading:true, needRetry:true, failed:false };
      }
 
      async actionFetchRanks(users){
@@ -51,6 +50,7 @@ const BSMRSTU_ORG_URL = `https://codeforces.com/ratings/organization/3403`
      }
 
      render(){
+
         try{
             const { match: { params: { contestID } }, location:{search} } = this.props;
             var filterUrl = search.match(`url=(.+)`)[1]
@@ -68,21 +68,15 @@ const BSMRSTU_ORG_URL = `https://codeforces.com/ratings/organization/3403`
 
             if (this.state.loading == false){
                 return <div>
-                    <Input contestID={this.state.contestID} url={this.state.filterUrl} />
                         <div className="stopped">
-
-                        {/* <Spinner style={{ width: "100px", height: "100px" }} animation="border" role="status">
-                            <span className="sr-only">Loading...</span>
-                        </Spinner> */}
+                        <br/><br/><br/>
                         <p>Not Available! </p>
                     </div>
                 </div>
 
             } else {
                 return <div>
-                    <Input contestID={this.state.contestID} url={this.state.filterUrl}/>
                     <div className="loading">
-
                         <Spinner style={{ width: "100px", height: "100px" }} animation="border" role="status">
                             <span className="sr-only">Loading...</span>
                         </Spinner>
@@ -95,7 +89,6 @@ const BSMRSTU_ORG_URL = `https://codeforces.com/ratings/organization/3403`
 
         var cf = this.state.data
         return <div>
-            <Input contestID={this.state.contestID} url={this.state.filterUrl} />
             {cf.contest.phase == "FINISHED" && <img src={logo} className="App-logo" alt="logo" />}
             {cf.contest.phase != "FINISHED" && <img src={logo} className="App-logo-animate" alt="logo" />}
 
@@ -104,11 +97,11 @@ const BSMRSTU_ORG_URL = `https://codeforces.com/ratings/organization/3403`
             </div>
 
             <div className="ranklist">
-                <Table variant="dark" size="sm" responsive="sm" striped="true">
+                <Table variant="dark" size="sm" responsive="sm" striped bordered>
                     <thead>
                         <tr>
                             <th style={{ "text-align": "left" }}>#</th>
-                            <th style={{ "text-align": "left" }}>Rank</th>
+                            <th style={{ "text-align": "center" }}>Rank</th>
                             <th style={{ "text-align": "left" }}>Handle</th>
                             <th >Points</th>
                             <th style={{ "text-align": "left"}}> </th>

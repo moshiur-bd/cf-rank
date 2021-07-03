@@ -45,3 +45,8 @@ html, body {
     transform: rotate(360deg);
   }
 }
+
+.App-container{
+    margin: 1% 5%;
+}
+
