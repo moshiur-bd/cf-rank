@@ -83,22 +83,31 @@ class ContestList extends React.Component{
                 <Table key = 'contests-table' variant="dark" size="sm" responsive="sm" striped="true">
                     <thead>
                         <tr>
-                            <th><FormControl autoFocus
+                            <th>Contest Tittle</th>
+                            <th>ID</th>
+
+                            <th ><FormControl autoFocus
                                  className="mx-3 my-2 w-auto"
-                                 placeholder="Type to filter..." defaultValue={this.state.searchStr} 
+                                 textalign="right"
+                                 placeholder="Filter by Tittle" defaultValue={this.state.searchStr} 
                                  onMouseMove={(e) => {
                                      if(this.state.searchStr != e.target.value){
                                         return this.setState({searchStr: e.target.value})
                                      }
                                     }} 
                                 ></FormControl></th>
-                            <th>Contest Tittle</th>
-                            <th>Contest ID</th>
+
+
+
                         </tr>
+                        
                     </thead>
                     <tbody>
                          <RowConatiner key={"search-str" +this.state.searchStr} searchStr={this.state.searchStr}>
                              {cf.map((r, i) =>{
+                                if( r.phase === "BEFORE" ){
+                                    return
+                                }
                                 
                                 if (!(r.id in this.refID)){
                                     this.selectRef.push(React.createRef())

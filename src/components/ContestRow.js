@@ -21,10 +21,9 @@ class ContestRow extends React.Component {
         var data = this.props.data
 
         return (<tr>
-            {/* <td><input type="checkbox" defaultChecked={this.state.chkbox} onChange={this.handleChangeChk} /></td> */}
-            <td><Link to={'/selector/contests/' + data.id + '?url=' + this.props.url}><p ref={this.props.innerRef} >{this.props.selected? "SELECTED": "select"}</p></Link></td>
             <td textalign="left">{data.name}</td>
             <td textalign="left">{data.id}</td>
+            <td ><Link to={'/selector/contests/' + data.id + '?url=' + this.props.url}><p ref={this.props.innerRef} >{this.props.selected ? "SELECTED" : "select"}</p></Link></td>
         </tr>
         )
     }
