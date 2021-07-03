@@ -20,7 +20,7 @@ const CONTEST_FINISHED = "FINISHED"
 
     constructor(props) {
     super(props);
-        this.state = { data: null, loading:true, needRetry:true, failed:false, handles: this.props.handles, handlesParsed:"", renderCount: 0 };
+        this.state = { data: null, loading:true, needRetry:true, failed:false, handles: this.props.handles, renderCount: 0 };
     }
 
     async actionFetchRanks(users){
@@ -119,7 +119,7 @@ const CONTEST_FINISHED = "FINISHED"
             (users) => {
                 console.log("parsed-users", users)
                 this.setState({
-                    handlesParsed:users
+                    handles: this.props.handles + users
                 })
             })
     }
@@ -134,7 +134,7 @@ const CONTEST_FINISHED = "FINISHED"
             if(this.props.url !== ""){
                 this.parseHandlesInterval = setInterval(() => { this.parseHandles()}, 60000);
             }
-            this.parseRankInterval = setInterval(() => { this.actionFetchRanks(this.state.handles + this.state.handlesParsed) }, 30000);
+            this.parseRankInterval = setInterval(() => { this.actionFetchRanks(this.state.handles) }, 30000);
             debugger
         }
     }
@@ -154,8 +154,8 @@ const CONTEST_FINISHED = "FINISHED"
          if (nextState.renderCount != this.state.renderCount) {
              return true
          }
-         if (nextState.handles != this.state.handles || nextState.handlesParsed != this.state.handlesParsed) {
-             this.actionFetchRanks(nextState.handles + nextState.handlesParsed)
+         if (nextState.handles != this.state.handles) {
+             this.actionFetchRanks(nextState.handles)
              return false
          }
          return false
