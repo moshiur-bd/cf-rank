@@ -14,15 +14,16 @@ const CF_STANDING_URL = (id) => `/contest.standings?contestId=`+id+`&handles=`
 
 
  class RankList extends React.Component{
+     _isMounted = false
 
      constructor(props) {
         super(props);
-         this.state = { data: null, contestID: 1541, filterUrl: "", loading:true, needRetry:true, failed:false };
+         this.state = { data: null, loading:true, needRetry:true, failed:false, handles:"", renderCount: 0 };
      }
 
      async actionFetchRanks(users){
          var errored = false
-         const url = CF_API + CF_STANDING_URL(this.state.contestID) + users
+         const url = CF_API + CF_STANDING_URL(this.props.contestID) + users
          console.log("Fetching", url)
          const resp = await fetch(url).
              catch(err => {
@@ -45,25 +46,17 @@ const CF_STANDING_URL = (id) => `/contest.standings?contestId=`+id+`&handles=`
          } else {
             this.state.needRetry = false
         }
-         this.state.loading = false
-         this.forceUpdate()
+        
+        this.state.loading = false
+        if(this._isMounted){
+            this.setState({
+                renderCount:this.state.renderCount + 1
+            })
+        }
+         //this.forceUpdate()
      }
 
      render(){
-
-        try{
-            const { match: { params: { contestID } }, location:{search} } = this.props;
-            var filterUrl = search.match(`url=(.+)`)[1]
-            if (contestID != null && filterUrl != null) {
-                this.state.contestID = contestID
-                this.state.filterUrl = filterUrl
-            }
-            console.log("state set", this.state.contestID, this.state.filterUrl)
-
-         }catch(e){
-             console.log("couldn't read params", e)
-         }
-
          if (this.state.data == null){
 
             if (this.state.loading == false){
@@ -117,39 +110,47 @@ const CF_STANDING_URL = (id) => `/contest.standings?contestId=`+id+`&handles=`
      }
 
 
-    async repeatedWork() {
+    async resolveHandles() {
         this.state.loading = true
-        return ParseCFUsersFromURL(this.state.filterUrl)
+        return ParseCFUsersFromURL(this.props.url)
         .then(
             (users) => {
                 console.log("users", users)
-                return this.actionFetchRanks(users)
+                this.setState({
+                    handles:users
+                })
             })
-        .catch(e => alert(e))
     }
 
     async setRefreshIfNecessary(){
-        await this.repeatedWork()
+        await this.resolveHandles()
         if (this.state.needRetry) {
-            this.interval = setInterval(()=>{this.repeatedWork()}, 30000);
+            this.interval = setInterval(() => { this.resolveHandles()}, 60000);
+            this.interval = setInterval(() => { this.actionFetchRanks(this.state.handles) }, 30000);
         }
     }
 
      componentDidMount() {
          this.setRefreshIfNecessary().then()
+         this._isMounted = true
      }
      
      componentWillUnmount() {
          clearInterval(this.interval);
+         this._isMounted = false;
      }
-//      componentDidUpdate(prevProps, prevState, snapshot) {
-//     //      debugger
-//     //      // Check to see if the "applied" flag got changed (NOT just "set")
-//     //      if (this.props.location.state.applied && !prevProps.location.state.applied) {
-//     //          this.state = { data: null, contestID: 1541, filterUrl: BSMRSTU_ORG_URL, loading: true, needRetry: true, failed: false }
-//     //          this.forceUpdate()
-//     //      }
-//     //  }
+
+     shouldComponentUpdate(nextProps, nextState) {
+         // debugger
+         if (nextState.renderCount != this.state.renderCount) {
+             return true
+         }
+         if (nextState.handles != this.state.handles) {
+             this.actionFetchRanks(nextState.handles)
+             return false
+         }
+         return false
+     }
 }
 
 export default RankList;
