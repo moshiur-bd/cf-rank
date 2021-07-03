@@ -15,17 +15,11 @@ export default function RankRow({data, rowid}){
         <td >{data.points}</td>
         <td ></td>
         {data.problemResults.map(r => {
-            if(r.points == 0){
-                return <td></td>
-            }
             return <td>
-                <span className="cell-points">{r.points}  <span className="cell-rejected">{r.rejectedAttemptCount > 0 && -r.rejectedAttemptCount}</span></span>
+                <span className="cell-points">{r.points > 0 && r.points}  <span className="cell-rejected">{r.rejectedAttemptCount > 0 && -r.rejectedAttemptCount}</span></span>
                 
-                <span className="cell-time">{new Date(r.bestSubmissionTimeSeconds * 1000).toISOString().substr(11, 8)}</span>
+                <span className="cell-time">{r.bestSubmissionTimeSeconds && new Date(r.bestSubmissionTimeSeconds * 1000).toISOString().substr(11, 8)}</span>
             </td>
-            
-            //<td>{r.points}</td>
-        
         })}
     </tr>)
 }
