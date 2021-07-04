@@ -21,7 +21,11 @@ const CONTEST_FINISHED = "FINISHED"
 
     constructor(props) {
         super(props);
-        this.state = { data: null, loading:true, needRetry:true, failed:false, handles: props.handles + props.parsedHandles, renderCount: 0 };
+        let h = props.handles;
+        if(props.url !== ""){
+            h = h + props.parsedHandles
+        }
+        this.state = { data: null, loading:true, needRetry:true, failed:false, handles: h, renderCount: 0 };
     }
 
     async actionFetchRanks(users){
@@ -61,7 +65,7 @@ const CONTEST_FINISHED = "FINISHED"
 
      render(){
          let invalidArgs = (this.props.handles == "") && (this.props.url == "")
-         debugger
+
          if(invalidArgs){
              this.state.loading = false
          }
@@ -128,7 +132,7 @@ const CONTEST_FINISHED = "FINISHED"
                     console.log("same as previous parsed-users. skipping")
                     return
                 }
-                debugger
+                
                 if (this._isMounted){
                     this.props.history.push(GetRanklistUrl(this.props.contestID, this.props.url, this.props.handles, users))
                 }

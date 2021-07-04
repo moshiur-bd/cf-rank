@@ -66,7 +66,11 @@ export function BuildUrl(to, contestID, url, handles, parsedHandles){
     nextPath = nextPath + contestID + "?"
     if(url !== ""  && url != undefined){
         nextPath = nextPath + "url=" + url + "&"
+    } else {
+        parsedHandles = ""
     }
+
+
     if (handles !== "" && handles != undefined) {
         nextPath =  nextPath + "handles=" + handles + "&"
     }
