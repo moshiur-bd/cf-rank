@@ -6,6 +6,7 @@ import { Spinner, Table, Form, Col, InputGroup, FormControl, Button, Navbar, Nav
 import { Link } from 'react-router-dom'
 import "./Navigation.css"
 import {BuildUrl} from "../lib/UrlInfo"
+import {GetRanklistUrl} from "../lib/Goto"
 
 
 
@@ -76,7 +77,7 @@ export default function Navigation(props){
                 </div>
                
                 <div className="button-div min-width one-elm-flex">
-                    <Link to={BuildUrl("/contest/", contestID, url, handles, props.parsedHandles)}>
+                    <Link to={GetRanklistUrl( contestID, url, handles, props.parsedHandles)}>
                         <Button type="submit" className="mb-0 btn-light" size="sm">
                             Load
                         </Button>

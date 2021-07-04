@@ -6,6 +6,7 @@ import ParseCFUsersFromURL from "../lib/ParseUser"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './RankList.css';
 import logo from '../logo.svg';
+import { GetRanklistUrl} from "../lib/Goto"
 
 
 
@@ -118,9 +119,15 @@ const CONTEST_FINISHED = "FINISHED"
         .then(
             (users) => {
                 console.log("parsed-users", users)
-                this.setState({
-                    handles: this.props.handles + users
-                })
+                if(users === "" || users.length === this.props.parsedHandles.length){
+                    console.log("same as previous parsed-users. skipping")
+                    return
+                }
+                debugger
+                if (this._isMounted){
+                    this.props.history.push(GetRanklistUrl(this.props.contestID, this.props.url, this.props.handles, users))
+                }
+                
             })
     }
 
@@ -130,12 +137,12 @@ const CONTEST_FINISHED = "FINISHED"
         }
         await this.parseHandles()
         if (this.state.needRetry) {
-            debugger
-            if(this.props.url !== ""){
-                this.parseHandlesInterval = setInterval(() => { this.parseHandles()}, 60000);
-            }
+            // // handles can be just parsed one time as the handles won't likely to change much
+            // if(this.props.url !== ""){
+            //     this.parseHandlesInterval = setInterval(() => { this.parseHandles()}, 60000);
+            // }
             this.parseRankInterval = setInterval(() => { this.actionFetchRanks(this.state.handles) }, 30000);
-            debugger
+            // debugger
         }
     }
 
