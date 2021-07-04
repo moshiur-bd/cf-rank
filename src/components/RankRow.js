@@ -8,6 +8,14 @@ export default function RankRow({data, localRank}){
         return <tr><td>called with null</td></tr>
     }
 
+
+    const mainContent = (r) => <div className="rank-main-content">
+        <span className="cell-points">{r.points} </span>
+        <span className="cell-time">{r.bestSubmissionTimeSeconds && new Date(r.bestSubmissionTimeSeconds * 1000).toISOString().substr(11, 8)}</span>
+    </div>
+
+    const rejectedCount = (r) => <span className="cell-rejected">{-r.rejectedAttemptCount}</span>
+
     return (<tr className="rank-font">
         <td style={{ "text-align": "left" }}><span className="hash-rank" >{data.rank > 0 && localRank}</span></td>
         <td style={{ "text-align": "center" }}>{data.rank > 0 && data.rank}</td>
@@ -16,9 +24,11 @@ export default function RankRow({data, localRank}){
         <td ></td>
         {data.problemResults.map(r => {
             return <td>
-                <span className="cell-points">{r.points > 0 && r.points}  <span className="cell-rejected">{r.rejectedAttemptCount > 0 && -r.rejectedAttemptCount}</span></span>
-                
-                <span className="cell-time">{r.bestSubmissionTimeSeconds && new Date(r.bestSubmissionTimeSeconds * 1000).toISOString().substr(11, 8)}</span>
+                <div className="rank-cell-div">
+                    {r.points > 0  && <div className="rank-side-content"></div>}
+                    {r.points > 0 && mainContent(r)}
+                    <div className="rank-side-content">{r.rejectedAttemptCount > 0 && rejectedCount(r)}</div>
+                </div>
             </td>
         })}
     </tr>)
