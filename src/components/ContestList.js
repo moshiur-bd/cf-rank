@@ -111,6 +111,7 @@ class ContestList extends React.Component{
                             <th></th>
                             <th>Contest Tittle</th>
                             <th>ID</th>
+                            <th>Codeforces</th>
                         </tr>
 
 
