@@ -1,4 +1,4 @@
-import { Spinner, Table, Form, Col, InputGroup, FormControl, Button } from 'react-bootstrap'
+import { Spinner, Table, Form, Col, InputGroup, FormControl, Button, ProgressBar } from 'react-bootstrap'
 import RankRow from "./RankRow"
 import Navigation from "./Navigation"
 import React from 'react'
@@ -15,6 +15,25 @@ const CF_STANDING_URL = (id) => `/contest.standings?contestId=`+id+`&handles=`
 
 const CONTEST_FINISHED = "FINISHED"
 
+
+
+function GetContestStatusText(status){
+    if(status === CONTEST_FINISHED){
+        return "Final Standing"
+    }
+
+    if (status === "PENDING_SYSTEM_TEST") {
+        return "Pending System Test"
+    }
+
+    if (status === "SYSTEM_TEST") {
+        return "System Testing"
+    }
+
+    if (status === "CODING") {
+        return "Contest is Running"
+    }
+}
 
  class RankList extends React.Component{
      _isMounted = false
@@ -63,6 +82,23 @@ const CONTEST_FINISHED = "FINISHED"
         //this.forceUpdate()
     }
 
+    displayProgressBar(relativeTimeSeconds, durationSeconds){
+        debugger
+        if(relativeTimeSeconds == undefined || durationSeconds == undefined){
+            return 
+        }
+        if(relativeTimeSeconds > durationSeconds || relativeTimeSeconds < 0){
+            return
+        }
+        let percent = Math.round((relativeTimeSeconds / durationSeconds) * 100)
+        return <tr>
+            <th colSpan="100">
+
+                <ProgressBar variant="info" now={percent} animated ></ProgressBar>
+            </th>
+        </tr>
+    }
+
      render(){
          let invalidArgs = (this.props.handles == "") && (this.props.url == "")
 
@@ -93,6 +129,7 @@ const CONTEST_FINISHED = "FINISHED"
 
 
         var cf = this.state.data
+        debugger
         return <div>
             {cf.contest.phase === CONTEST_FINISHED && <img src={logo} className="App-logo" alt="logo" />}
             {cf.contest.phase !== CONTEST_FINISHED && <img src={logo} className="App-logo-animate" alt="logo" />}
@@ -104,6 +141,12 @@ const CONTEST_FINISHED = "FINISHED"
             <div className="ranklist">
                 <Table variant="dark" size="sm" responsive="sm" striped bordered>
                     <thead>
+                        <tr>
+                            <th colSpan="100">
+                                {GetContestStatusText(cf.contest.phase)}
+                            </th>
+                        </tr>
+                        {this.displayProgressBar(cf.contest.relativeTimeSeconds, cf.contest.durationSeconds)}
                         <tr>
                             <th style={{ "text-align": "left" }}><span className="hash-rank" >#</span></th>
                             <th style={{ "text-align": "center" }}>Rank</th>
