@@ -10,3 +10,13 @@
     padding-right: 10px;
     text-align: left;
 }
+
+.filter-container{
+    display: flex;
+    flex-flow: row wrap;
+    /* justify-content: flex-start; */
+    align-items: left;
+    justify-content: left;
+    text-align: center;
+}
+

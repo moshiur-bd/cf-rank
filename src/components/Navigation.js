@@ -20,10 +20,6 @@ export default function Navigation(props){
     const [contestID, setContestID] = useState(rContestID)
     const [handles, setHandles] = useState(rHandles)
 
-
-    console.log("Nav-props",props)
-
-
     var InputJSX = <div className="parent-input-div one-elm-flex">
         <Form key={rUrl + rContestID} className="width-hundred one-elm-flex">
             <div className="width-hundred flex-input-div">

@@ -109,7 +109,7 @@ const CONTEST_FINISHED = "FINISHED"
                             <th style={{ "text-align": "center" }}>Rank</th>
                             <th style={{ "text-align": "left" }}>Handle</th>
                             <th >Points</th>
-                            <th style={{ "text-align": "left"}}> </th>
+                            <th style={{ "text-align": "left" }}> </th>
                             {cf.problems.map(p => <th>{p.index}</th>)}
                         </tr>
                     </thead>
