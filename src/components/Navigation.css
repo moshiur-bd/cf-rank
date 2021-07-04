@@ -71,3 +71,8 @@
   justify-content: center;
   text-align: center;
 }
+
+
+.hide-me div{
+    display: none;
+}

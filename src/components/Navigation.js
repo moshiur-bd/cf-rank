@@ -21,10 +21,11 @@ export default function Navigation(props){
     const [contestID, setContestID] = useState(rContestID)
     const [handles, setHandles] = useState(rHandles)
     const [unofficial, setUnofficial] = useState(rUnofficial)
+    const [invisible, setInvisible] = useState(false)
 
     debugger
 
-    var InputJSX = <div className="parent-input-div one-elm-flex">
+    var InputJSX = <div className={invisible? "hide-me":"parent-input-div one-elm-flex"}>
         <Form key={rUrl + rContestID} className="width-hundred one-elm-flex">
             <div className="width-hundred flex-input-div">
                 
@@ -101,8 +102,11 @@ export default function Navigation(props){
         <Nav className="mr-auto width-hundred">
             <Nav.Link href={BuildUrl("#selector/contests/", contestID, url, handles, props.parsedHandles, unofficial)} active={props.location.pathname.startsWith("/selector/contests")}>Contests</Nav.Link>
             <Nav.Link disabled active={props.location.pathname.startsWith("/contest")}>Ranklist</Nav.Link>
+
+            <div className="one-elm-flex"><input type="checkbox" onClick={e => setInvisible(e.target.checked)} value={invisible} /></div>
             {InputJSX}
         </Nav>
+
         
     </Navbar>
     </div>
