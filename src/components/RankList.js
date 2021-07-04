@@ -20,8 +20,8 @@ const CONTEST_FINISHED = "FINISHED"
      _isMounted = false
 
     constructor(props) {
-    super(props);
-        this.state = { data: null, loading:true, needRetry:true, failed:false, handles: this.props.handles + this.props.parsedHandles, renderCount: 0 };
+        super(props);
+        this.state = { data: null, loading:true, needRetry:true, failed:false, handles: props.handles + props.parsedHandles, renderCount: 0 };
     }
 
     async actionFetchRanks(users){
@@ -60,13 +60,18 @@ const CONTEST_FINISHED = "FINISHED"
     }
 
      render(){
-         if (this.state.data == null){
+         let invalidArgs = (this.props.handles == "") && (this.props.url == "")
+         debugger
+         if(invalidArgs){
+             this.state.loading = false
+         }
+         if (invalidArgs || this.state.data == null){
 
             if (this.state.loading == false){
                 return <div>
                         <div className="stopped">
                         <br/><br/><br/>
-                        <p>Not Available! </p>
+                        <p>Not Available or Invalid Args!</p>
                     </div>
                 </div>
 
