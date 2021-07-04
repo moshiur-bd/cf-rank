@@ -24,7 +24,7 @@ class ContestRow extends React.Component {
         return (<tr>
             <td textalign="left">{data.name}</td>
             <td textalign="left">{data.id}</td>
-            <td ><Link to={BuildUrl('/selector/contests/', data.id, this.props.url, this.props.handles)}><p ref={this.props.innerRef} >{this.props.selected ? "SELECTED" : "select"}</p></Link></td>
+            <td ><Link to={BuildUrl('/selector/contests/', data.id, this.props.url, this.props.handles, this.props.parsedHandles)}><p ref={this.props.innerRef} >{this.props.selected ? "SELECTED" : "select"}</p></Link></td>
         </tr>
         )
     }

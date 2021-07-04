@@ -76,7 +76,7 @@ export default function Navigation(props){
                 </div>
                
                 <div className="button-div min-width one-elm-flex">
-                    <Link to={BuildUrl("/contest/", contestID, url, handles)}>
+                    <Link to={BuildUrl("/contest/", contestID, url, handles, props.parsedHandles)}>
                         <Button type="submit" className="mb-0 btn-light" size="sm">
                             Load
                         </Button>
@@ -90,7 +90,7 @@ export default function Navigation(props){
     return <div>
         <Navbar bg="dark" variant="dark" className='navbar-expand-sm'>
         <Nav className="mr-auto width-hundred">
-            <Nav.Link href={BuildUrl("#selector/contests/", contestID, url, handles)} active={props.location.pathname.startsWith("/selector/contests")}>Contests</Nav.Link>
+            <Nav.Link href={BuildUrl("#selector/contests/", contestID, url, handles, props.parsedHandles)} active={props.location.pathname.startsWith("/selector/contests")}>Contests</Nav.Link>
             <Nav.Link disabled active={props.location.pathname.startsWith("/contest")}>Ranklist</Nav.Link>
             {InputJSX}
         </Nav>
