@@ -23,11 +23,11 @@ export default function Navigation(props){
     console.log("Nav-props",props)
 
 
-    var InputJSX = <div className="parent-input-div">
-        <Form key={rUrl + rContestID} className="width-hundred">
+    var InputJSX = <div className="parent-input-div one-elm-flex">
+        <Form key={rUrl + rContestID} className="width-hundred one-elm-flex">
             <div className="width-hundred flex-input-div">
                 
-                <div className="handles-div min-width height-magic">
+                <div className="handles-div min-width one-elm-flex">
                     <Form.Label htmlFor="inlineFormInput" srOnly>
                         Handles
                     </Form.Label>
@@ -42,7 +42,7 @@ export default function Navigation(props){
                     />
                 </div>
 
-                <div className="url-div min-width height-magic">
+                <div className="url-div min-width one-elm-flex">
                     <Form.Label htmlFor="inlineFormInput" srOnly>
                         URL
                     </Form.Label>
@@ -56,7 +56,7 @@ export default function Navigation(props){
                         // onLoad={e => setUrl(e.target.value)}
                     />
                 </div>
-                <div className="contest-div min-width height-magic">
+                <div className="contest-div min-width one-elm-flex">
                     <Form.Label htmlFor="inlineFormInput2" srOnly>
                         ContestID
                     </Form.Label>
@@ -75,7 +75,7 @@ export default function Navigation(props){
                     />
                 </div>
                
-                <div className="button-div min-width height-magic">
+                <div className="button-div min-width one-elm-flex">
                     <Link to={BuildUrl("/contest/", contestID, url, handles)}>
                         <Button type="submit" className="mb-0 btn-light" size="sm">
                             Load
