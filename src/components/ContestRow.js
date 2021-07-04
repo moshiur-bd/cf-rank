@@ -22,7 +22,7 @@ class ContestRow extends React.Component {
         var data = this.props.data
 
         return (<tr>
-            <td ><Link to={BuildUrl('/selector/contests/', data.id, this.props.url, this.props.handles, this.props.parsedHandles)}><p ref={this.props.innerRef} >{this.props.selected ? "SELECTED" : "select"}</p></Link></td>
+            <td ><Link to={BuildUrl('/selector/contests/', data.id, this.props.url, this.props.handles, this.props.parsedHandles, this.props.unofficial)}><p ref={this.props.innerRef} >{this.props.selected ? "SELECTED" : "select"}</p></Link></td>
             <td textAlign="left">{data.name}</td>
             <td textAlign="left">{data.id}</td>
             <td textAlign="center"><a href={"https://codeforces.com/contest/" + data.id} target="_blank">link</a></td>

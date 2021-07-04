@@ -11,7 +11,7 @@ import { GetRanklistUrl} from "../lib/Goto"
 
 
 const CF_API = "https://codeforces.com/api"
-const CF_STANDING_URL = (id) => `/contest.standings?contestId=`+id+`&handles=`
+const CF_STANDING_URL = (id, unofficial) => `/contest.standings?showUnofficial=`+ unofficial +`&contestId=`+id+`&handles=`
 
 const CONTEST_FINISHED = "FINISHED"
 
@@ -49,7 +49,7 @@ function GetContestStatusText(status){
 
     async actionFetchRanks(users){
         var errored = false
-        const url = CF_API + CF_STANDING_URL(this.props.contestID) + users
+        const url = CF_API + CF_STANDING_URL(this.props.contestID, this.props.unofficial) + users
         console.log("Fetching", url)
         const resp = await fetch(url).
             catch(err => {
