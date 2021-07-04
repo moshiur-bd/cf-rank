@@ -20,7 +20,7 @@ const CONTEST_FINISHED = "FINISHED"
 
     constructor(props) {
     super(props);
-        this.state = { data: null, loading:true, needRetry:true, failed:false, handles: this.props.handles, renderCount: 0 };
+        this.state = { data: null, loading:true, needRetry:true, failed:false, handles: this.props.handles + this.props.parsedHandles, renderCount: 0 };
     }
 
     async actionFetchRanks(users){

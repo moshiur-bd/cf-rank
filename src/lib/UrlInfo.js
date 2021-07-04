@@ -71,7 +71,6 @@ export function BuildUrl(to, contestID, url, handles, parsedHandles){
         nextPath =  nextPath + "handles=" + handles + "&"
     }
 
-    debugger
     if (parsedHandles !== "" && parsedHandles != undefined) {
         nextPath = nextPath + "parsedHandles=" + parsedHandles + "&"
     }
