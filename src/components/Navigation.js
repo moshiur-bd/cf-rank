@@ -23,10 +23,11 @@ export default function Navigation(props){
     console.log("Nav-props",props)
 
 
-    var InputJSX = <div className="input-url">
-        <Form  key={rUrl+rContestID}>
-            <Form.Row className="align-items-center">
-                <Col xs="auto">
+    var InputJSX = <div className="parent-input-div">
+        <Form key={rUrl + rContestID} className="width-hundred">
+            <div className="width-hundred flex-input-div">
+                
+                <div className="handles-div min-width height-magic">
                     <Form.Label htmlFor="inlineFormInput" srOnly>
                         Handles
                     </Form.Label>
@@ -39,9 +40,9 @@ export default function Navigation(props){
                         onChange={e => setHandles(e.target.value)}
                     // onLoad={e => setUrl(e.target.value)}
                     />
-                </Col>
+                </div>
 
-                <Col xs="auto">
+                <div className="url-div min-width height-magic">
                     <Form.Label htmlFor="inlineFormInput" srOnly>
                         URL
                     </Form.Label>
@@ -54,14 +55,14 @@ export default function Navigation(props){
                         onChange={e => setUrl(e.target.value)}
                         // onLoad={e => setUrl(e.target.value)}
                     />
-                </Col>
-                <Col xs="auto">
+                </div>
+                <div className="contest-div min-width height-magic">
                     <Form.Label htmlFor="inlineFormInput2" srOnly>
                         ContestID
                     </Form.Label>
                     <FormControl
                         size="sm"
-                        className="mb-0 contestID-field"
+                        className="mb-0"
                         id="inlineFormInput2"
                         placeholder="ContestID"
                         value={contestID}
@@ -72,27 +73,28 @@ export default function Navigation(props){
                             }
                         }
                     />
-                </Col>
+                </div>
                
-                <Col xs="auto">
+                <div className="button-div min-width height-magic">
                     <Link to={BuildUrl("/contest/", contestID, url, handles)}>
                         <Button type="submit" className="mb-0 btn-light" size="sm">
                             Load
                         </Button>
                     </Link>
-                </Col>
-            </Form.Row>
+                </div>
+            </div>
         </Form>
     </div>
 
     
     return <div>
         <Navbar bg="dark" variant="dark" className='navbar-expand-sm'>
-        <Nav className="mr-auto">
+        <Nav className="mr-auto width-hundred">
             <Nav.Link href={BuildUrl("#selector/contests/", contestID, url, handles)} active={props.location.pathname.startsWith("/selector/contests")}>Contests</Nav.Link>
             <Nav.Link disabled active={props.location.pathname.startsWith("/contest")}>Ranklist</Nav.Link>
+            {InputJSX}
         </Nav>
-        {InputJSX}
+        
     </Navbar>
     </div>
 

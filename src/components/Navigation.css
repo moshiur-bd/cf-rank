@@ -1,11 +1,43 @@
-.contestID-field{
-    max-width: 8vw;
-    min-width: 50px;
+
+.width-hundred{
+    width: 100%;
+    margin:auto;
 }
 
-.org-field{
-    max-width: 50vw;
-    min-width: 0;
-    width: auto;
-    display: inline;
+.flex-input-div{
+    flex-grow: 1;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+}
+
+
+.min-width{
+    min-width: 100px;
+}
+.parent-input-div{
+    flex-grow: 1;
+}
+
+.handles-div{
+    flex-grow: 1;
+    padding-left: 2%;
+}
+.url-div{
+    flex-grow: 1;
+    padding-left: 2%;
+}
+.contest-div{
+    flex-grow: 0;
+    max-width: 80px;
+    padding-left: 2%;
+}
+.button-div{
+    flex-grow: 0;
+    max-width: 40px;
+    padding-left: 2%;
+}
+
+.flex-input-div input{
+    height: calc(.8em + .5rem + 2px);
 }
