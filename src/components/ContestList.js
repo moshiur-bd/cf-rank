@@ -129,7 +129,7 @@ class ContestList extends React.Component{
                                 }
                                 
                                 
-                                 var elm = <ContestRow ref={this.selectRef[this.refID[r.id]]} key={i} data={r} url={this.props.url} handles={this.props.handles} parsedHandles={this.props.parsedHandles} selected={r.id == this.props.contestID}/>
+                                 var elm = <ContestRow ref={this.selectRef[this.refID[r.id]]} key={i} data={r} url={this.props.url} handles={this.props.handles} parsedHandles={this.props.parsedHandles} unofficial={this.props.unofficial} selected={r.id == this.props.contestID}/>
                                 return elm
                                 })}
                         </RowConatiner>
