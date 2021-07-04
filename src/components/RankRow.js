@@ -1,7 +1,7 @@
 import React from 'react'
 import './RankRow.css'
 
-export default function RankRow({data, rowid}){
+export default function RankRow({data, localRank}){
     const items = []
     //debugger;
     if(data == null) {
@@ -9,7 +9,7 @@ export default function RankRow({data, rowid}){
     }
 
     return (<tr className="rank-font">
-        <td style={{ "text-align": "left" }}><span className="hash-rank" >{data.rank > 0 && rowid}</span></td>
+        <td style={{ "text-align": "left" }}><span className="hash-rank" >{data.rank > 0 && localRank}</span></td>
         <td style={{ "text-align": "center" }}>{data.rank > 0 && data.rank}</td>
         <td style={{ "text-align": "left" }}>{data.party.members.map(m => m.handle + " ")}</td>
         <td >{data.points}</td>

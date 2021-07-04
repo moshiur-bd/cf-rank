@@ -128,8 +128,16 @@ function GetContestStatusText(status){
         }
 
 
-        var cf = this.state.data
-        debugger
+        let cf = this.state.data
+        let lastRank = 1
+
+        const currentRank = (i) => {
+            if ( i === 0  || cf.rows[i-1].rank == cf.rows[i].rank){
+                return lastRank
+            }
+            return lastRank = i + 1
+        }
+        
         return <div>
             {cf.contest.phase === CONTEST_FINISHED && <img src={logo} className="App-logo" alt="logo" />}
             {cf.contest.phase !== CONTEST_FINISHED && <img src={logo} className="App-logo-animate" alt="logo" />}
@@ -157,7 +165,7 @@ function GetContestStatusText(status){
                         </tr>
                     </thead>
                     <tbody>
-                        {cf.rows.map((r, i) => <RankRow key={i} rowid={i + 1} data={r} />) }
+                        {cf.rows.map((r, i) => <RankRow key={i}  localRank={currentRank(i)} data={r} />) }
                     </tbody>
                 </Table>
             </div>
