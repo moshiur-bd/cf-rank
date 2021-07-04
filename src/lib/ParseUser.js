@@ -25,5 +25,6 @@ export default async function ParseCFUsersFromRank(url){
     })
     .catch(function (err) {
         console.log('Failed to fetch page: ', err);
+        return ""
     });
 }
