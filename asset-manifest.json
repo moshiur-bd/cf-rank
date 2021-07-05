@@ -1,26 +1,26 @@
 {
   "files": {
-    "main.css": "/cf-rank/static/css/main.d467d78d.chunk.css",
-    "main.js": "/cf-rank/static/js/main.67bc80c1.chunk.js",
-    "main.js.map": "/cf-rank/static/js/main.67bc80c1.chunk.js.map",
-    "runtime-main.js": "/cf-rank/static/js/runtime-main.7da91367.js",
-    "runtime-main.js.map": "/cf-rank/static/js/runtime-main.7da91367.js.map",
+    "main.css": "/cf-rank/static/css/main.359b3ba2.chunk.css",
+    "main.js": "/cf-rank/static/js/main.8bb92095.chunk.js",
+    "main.js.map": "/cf-rank/static/js/main.8bb92095.chunk.js.map",
+    "runtime-main.js": "/cf-rank/static/js/runtime-main.5440f2d6.js",
+    "runtime-main.js.map": "/cf-rank/static/js/runtime-main.5440f2d6.js.map",
     "static/css/2.4c97ca4f.chunk.css": "/cf-rank/static/css/2.4c97ca4f.chunk.css",
-    "static/js/2.c3f39c47.chunk.js": "/cf-rank/static/js/2.c3f39c47.chunk.js",
-    "static/js/2.c3f39c47.chunk.js.map": "/cf-rank/static/js/2.c3f39c47.chunk.js.map",
-    "static/js/3.e0809c8c.chunk.js": "/cf-rank/static/js/3.e0809c8c.chunk.js",
-    "static/js/3.e0809c8c.chunk.js.map": "/cf-rank/static/js/3.e0809c8c.chunk.js.map",
+    "static/js/2.ec2128b9.chunk.js": "/cf-rank/static/js/2.ec2128b9.chunk.js",
+    "static/js/2.ec2128b9.chunk.js.map": "/cf-rank/static/js/2.ec2128b9.chunk.js.map",
+    "static/js/3.4c1ac308.chunk.js": "/cf-rank/static/js/3.4c1ac308.chunk.js",
+    "static/js/3.4c1ac308.chunk.js.map": "/cf-rank/static/js/3.4c1ac308.chunk.js.map",
     "index.html": "/cf-rank/index.html",
     "static/css/2.4c97ca4f.chunk.css.map": "/cf-rank/static/css/2.4c97ca4f.chunk.css.map",
-    "static/css/main.d467d78d.chunk.css.map": "/cf-rank/static/css/main.d467d78d.chunk.css.map",
-    "static/js/2.c3f39c47.chunk.js.LICENSE.txt": "/cf-rank/static/js/2.c3f39c47.chunk.js.LICENSE.txt",
+    "static/css/main.359b3ba2.chunk.css.map": "/cf-rank/static/css/main.359b3ba2.chunk.css.map",
+    "static/js/2.ec2128b9.chunk.js.LICENSE.txt": "/cf-rank/static/js/2.ec2128b9.chunk.js.LICENSE.txt",
     "static/media/logo.6ce24c58.svg": "/cf-rank/static/media/logo.6ce24c58.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.7da91367.js",
+    "static/js/runtime-main.5440f2d6.js",
     "static/css/2.4c97ca4f.chunk.css",
-    "static/js/2.c3f39c47.chunk.js",
-    "static/css/main.d467d78d.chunk.css",
-    "static/js/main.67bc80c1.chunk.js"
+    "static/js/2.ec2128b9.chunk.js",
+    "static/css/main.359b3ba2.chunk.css",
+    "static/js/main.8bb92095.chunk.js"
   ]
 }
