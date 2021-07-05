@@ -1,12 +1,22 @@
 import React from 'react'
 import './RankRow.css'
 
-export default function RankRow({data, localRank}){
+
+const rankToCSSClassName =(rank) => rank.replace(/\s/g, "");
+
+
+export default function RankRow({data, localRank, userInfo}){
     const items = []
     if(data == null) {
         return <tr><td>called with null</td></tr>
     }
 
+    const getUserRank = (handle) => {
+        if (handle in userInfo){
+            return userInfo[handle].rank
+        }
+        return ""
+    }
 
     const mainContent = (r) => <div className="rank-main-content">
         <span className="cell-points">{r.points} </span>
@@ -18,7 +28,7 @@ export default function RankRow({data, localRank}){
     return (<tr className="rank-font">
         <td style={{ "text-align": "left" }}><span className="hash-rank" >{data.rank > 0 && localRank}</span></td>
         <td style={{ "text-align": "center" }}>{data.rank > 0 && data.rank}</td>
-        <td style={{ "text-align": "left" }}>{data.party.members.map(m => m.handle + " ")}</td>
+        <td style={{ "text-align": "left" }}>{data.party.members.map(m => <span className={rankToCSSClassName(getUserRank(m.handle))}>{m.handle + " "} </span>)}</td>
         <td >{data.points}</td>
         <td ></td>
         {data.problemResults.map(r => {

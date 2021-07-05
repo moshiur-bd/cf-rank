@@ -2,7 +2,8 @@ const ProxyHost = `https://be-beam.swiftshopbd.com/`
 
 
 const CF_API = "https://codeforces.com/api"
-const CF_STANDING_URL = (id, unofficial) => `/contest.standings?showUnofficial=` + unofficial + `&contestId=` + id + `&handles=`
+const CF_STANDING_URL = (id, unofficial, users) => `/contest.standings?showUnofficial=` + unofficial + `&contestId=` + id + `&handles=` + users
+const CF_USER_INFO = (users) => `/user.info?handles=` + users
 const CONTEST_FINISHED = "FINISHED"
 
 
@@ -36,7 +37,24 @@ export async function ParseCFUsersFromURL(url){
 
 export async function FetchRanks(contestID, users, unofficial){
     var errored = false
-    const url = CF_API + CF_STANDING_URL(contestID, unofficial) + users
+    const url = CF_API + CF_STANDING_URL(contestID, unofficial, users)
+    console.log("Fetching", url)
+    const resp = await fetch(url).
+        catch(err => {
+            console.log(err);
+            errored = true
+            return
+        });
+
+    if (errored || resp.status !== 200) {
+        return undefined
+    }
+    return (await resp.json()).result
+}
+
+export async function FetchUserInfo(users, unofficial) {
+    var errored = false
+    const url = CF_API + CF_USER_INFO(users)
     console.log("Fetching", url)
     const resp = await fetch(url).
         catch(err => {
@@ -69,3 +87,22 @@ export function GetContestStatusText(status) {
         return "Contest is Running"
     }
 }
+
+export function GetHandleTitle(rating) {
+    if (rating < 1200) {
+        return "newbie"
+    }
+
+    if (rating < 1400) {
+        return "pupil"
+    }
+
+    if (rating < 1600) {
+        return "specialist"
+    }
+
+    if (rating < 1900) {
+        return "expert"
+    }
+}
+
