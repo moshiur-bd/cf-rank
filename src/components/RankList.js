@@ -50,9 +50,7 @@ class RankList extends React.Component{
     }
 
     async actionFetchUserInfo(users) {
-
         let resp = await FetchUserInfo(users)
-        debugger
         if (resp !== undefined) {
             let mp = {}
             resp.map(r => mp[r.handle] = r)
@@ -84,7 +82,6 @@ class RankList extends React.Component{
     }
 
     render(){
-        debugger
         let invalidArgs = (this.props.handles == "") && (this.props.url == "")
 
         if(invalidArgs){

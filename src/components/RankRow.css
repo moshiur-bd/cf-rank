@@ -1,3 +1,18 @@
+.handle-cell-div{
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: left;
+    justify-content: left;
+    text-align: center;
+}
+.handle{
+    margin: 0% 2%;
+}
+.handle a{
+    color:#fff;
+}
+
+
 .rank-cell-div{
     display: flex;
     flex-flow: row nowrap;
