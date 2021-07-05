@@ -72,7 +72,7 @@ export async function FetchUserInfo(users, unofficial) {
 
 export function GetContestStatusText(status) {
     if (status === CONTEST_FINISHED) {
-        return "Final Standing"
+        return "Final Standings"
     }
 
     if (status === "PENDING_SYSTEM_TEST") {

@@ -15,7 +15,9 @@
     margin: 1% 5%;
 }
 
-
+.white-hyperlink a{
+    color:#fff
+}
 
 .loading{
   display: flex;

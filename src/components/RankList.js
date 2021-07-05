@@ -132,8 +132,8 @@ class RankList extends React.Component{
             <Table variant="dark" size="sm" responsive="sm" striped bordered>
                 <thead>
                     <tr>
-                        <th colSpan="100">
-                            {GetContestStatusText(cf.contest.phase)}
+                        <th className="white-hyperlink" colSpan="100">
+                            <a target="_blank" href={"https://codeforces.com/contest/" + this.props.contestID + "/standings"}>{GetContestStatusText(cf.contest.phase)}</a>
                         </th>
                     </tr>
                     {this.displayProgressBar(cf.contest.relativeTimeSeconds, cf.contest.durationSeconds)}
@@ -143,7 +143,7 @@ class RankList extends React.Component{
                         <th style={{ "text-align": "left" }}>Handle</th>
                         <th >Points</th>
                         <th style={{ "text-align": "left" }}> </th>
-                        {cf.problems.map(p => <th>{p.index}</th>)}
+                        {cf.problems.map(p => <th className="white-hyperlink" title={p.name + " : " + p.rating}><a target="_blank" href={"https://codeforces.com/contest/"+this.props.contestID + "/problem/" + p.index}>{p.index}</a></th>)}
                     </tr>
                 </thead>
                 <tbody>
