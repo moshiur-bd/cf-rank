@@ -2,7 +2,6 @@ import { Spinner, Table, Form, Col, InputGroup, FormControl, Button } from 'reac
 import ContestRow from "./ContestRow"
 import Navigation from "./Navigation"
 import React, { useDebugValue } from 'react'
-import ParseCFUsersFromURL from "../lib/ParseUser"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './ContestList.css';
 import logo from '../logo.svg';
@@ -94,7 +93,6 @@ class ContestList extends React.Component{
                                     </div>
                                     <div>
                                         <Button type="submit" className="btn-light" onClick={(e) => {
-                                            debugger
                                             if (this.state.searchStr != "") {
                                                 return this.setState({ renderCount: this.state.renderCount + 1 })
                                             }

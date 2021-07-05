@@ -3,7 +3,6 @@ import './RankRow.css'
 
 export default function RankRow({data, localRank}){
     const items = []
-    //debugger;
     if(data == null) {
         return <tr><td>called with null</td></tr>
     }

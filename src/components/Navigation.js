@@ -23,8 +23,6 @@ export default function Navigation(props){
     const [unofficial, setUnofficial] = useState(rUnofficial)
     const [invisible, setInvisible] = useState(false)
 
-    debugger
-
     var InputJSX = <div className={invisible? "hide-me":"parent-input-div one-elm-flex"}>
         <Form key={rUrl + rContestID} className="width-hundred one-elm-flex">
             <div className="width-hundred flex-input-div">
@@ -72,7 +70,6 @@ export default function Navigation(props){
                         value={contestID}
                         onChange={
                             (e) => {
-                                debugger
                                 setContestID(e.target.value)
                             }
                         }

@@ -55,8 +55,6 @@ export function SameUrl(prop1, prop2){
 }
 
 export function BuildUrl(to, contestID, url, handles, parsedHandles, unofficial){
-    debugger
-
     let nextPath = to
     if (nextPath.length > 0 && nextPath.slice(-1)!= "/")
     {

@@ -2,7 +2,7 @@ import { Spinner, Table, Form, Col, InputGroup, FormControl, Button, ProgressBar
 import RankRow from "./RankRow"
 import Navigation from "./Navigation"
 import React from 'react'
-import ParseCFUsersFromURL from "../lib/ParseUser"
+import { ParseCFUsersFromURL, FetchRanks, GetContestStatusText} from "../lib/CF"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './RankList.css';
 import logo from '../logo.svg';
@@ -10,30 +10,9 @@ import { GetRanklistUrl} from "../lib/Goto"
 
 
 
-const CF_API = "https://codeforces.com/api"
-const CF_STANDING_URL = (id, unofficial) => `/contest.standings?showUnofficial=`+ unofficial +`&contestId=`+id+`&handles=`
+
 
 const CONTEST_FINISHED = "FINISHED"
-
-
-
-function GetContestStatusText(status){
-    if(status === CONTEST_FINISHED){
-        return "Final Standing"
-    }
-
-    if (status === "PENDING_SYSTEM_TEST") {
-        return "Pending System Test"
-    }
-
-    if (status === "SYSTEM_TEST") {
-        return "System Testing"
-    }
-
-    if (status === "CODING") {
-        return "Contest is Running"
-    }
-}
 
  class RankList extends React.Component{
      _isMounted = false
@@ -48,22 +27,13 @@ function GetContestStatusText(status){
     }
 
     async actionFetchRanks(users){
-        var errored = false
-        const url = CF_API + CF_STANDING_URL(this.props.contestID, this.props.unofficial) + users
-        console.log("Fetching", url)
-        const resp = await fetch(url).
-            catch(err => {
-                console.log(err);
-                errored = true
-                return
-            });
 
-        if (errored) {
-            return
-        }
+        let resp = await FetchRanks(this.props.contestID, users, this.props.unofficial)
 
-        if (resp.status === 200) {
-            this.state.data = (await resp.json()).result
+        debugger
+
+        if (resp !== undefined) {
+            this.state.data = resp
             if (this.state.data.contest.phase == CONTEST_FINISHED) {
                 this.state.needRetry = false
             } else {
@@ -79,11 +49,9 @@ function GetContestStatusText(status){
                 renderCount:this.state.renderCount + 1
             })
         }
-        //this.forceUpdate()
     }
 
     displayProgressBar(relativeTimeSeconds, durationSeconds){
-        debugger
         if(relativeTimeSeconds == undefined || durationSeconds == undefined){
             return 
         }
@@ -202,7 +170,6 @@ function GetContestStatusText(status){
             //     this.parseHandlesInterval = setInterval(() => { this.parseHandles()}, 60000);
             // }
             this.parseRankInterval = setInterval(() => { this.actionFetchRanks(this.state.handles) }, 30000);
-            // debugger
         }
     }
 
@@ -217,7 +184,6 @@ function GetContestStatusText(status){
      }
 
      shouldComponentUpdate(nextProps, nextState) {
-         // debugger
          if (nextState.renderCount != this.state.renderCount) {
              return true
          }
