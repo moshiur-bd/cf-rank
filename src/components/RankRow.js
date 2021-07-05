@@ -36,7 +36,9 @@ export default function RankRow({data, localRank, userInfo}){
     return (<tr className="rank-font">
         <td style={{ "text-align": "left" }}><span className="hash-rank" >{data.rank > 0 && localRank}</span></td>
         <td style={{ "text-align": "center" }}>{data.rank > 0 && data.rank}</td>
-        <td style={{ "text-align": "left" }}><div className="handle-cell-div">{data.party.members.map(m => 
+        <td style={{ "text-align": "left" }}><div className="handle-cell-div">
+            {data.party.participantType !== "CONTESTANT" && <span style={{ "color": "#fff" }}>*</span>}
+            {data.party.members.map(m => 
             <div className={"handle " + rankToCSSClassName(getUserRank(m.handle))}> <a target="_blank" href={"https://codeforces.com/profile/" + m.handle} title={getUserRank(m.handle) + " " + getUserFullName(m.handle)} >
                 <div> <span className="firstLetter">{m.handle.substr(0, 1)}</span>{ m.handle.substr(1) } </div>
              </a></div> )} </div>
