@@ -92,7 +92,7 @@ class RankList extends React.Component{
                 }
             }
             
-            if(cnt <= 0) {
+            if(cnt <= 0 || pageID > 20) {
                 break
             }
         }
