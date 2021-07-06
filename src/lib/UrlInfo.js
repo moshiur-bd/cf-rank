@@ -40,12 +40,13 @@ export function UrlInfo(props){
         contestID: props.match.params.contestID,
         handles: handles,
         parsedHandles: parsedHandles,
+        unofficial: getQueryVariable(props.location.search, "unofficial") == "true"
     }
 }
 
 export function HashFromURL(props){
-    const {url, contestID, handles, parsedHandles} = UrlInfo(props)
-    return getHashCode(url + contestID + handles + parsedHandles)
+    const {url, contestID, handles, parsedHandles, unofficial} = UrlInfo(props)
+    return getHashCode(url + contestID + handles + parsedHandles + unofficial.toString())
 }
 
 
@@ -53,21 +54,24 @@ export function SameUrl(prop1, prop2){
     return HashFromURL(prop1) == HashFromURL(prop2)
 }
 
-export function BuildUrl(to, contestID, url, handles, parsedHandles){
-
+export function BuildUrl(to, contestID, url, handles, parsedHandles, unofficial){
     let nextPath = to
     if (nextPath.length > 0 && nextPath.slice(-1)!= "/")
     {
         nextPath = nextPath + "/"
     }
     if(!contestID) {
-        contestID = 1541
+        contestID = "1541"
     }
     nextPath = nextPath + contestID + "?"
     if(url !== ""  && url != undefined){
         nextPath = nextPath + "url=" + url + "&"
     } else {
         parsedHandles = ""
+    }
+
+    if(unofficial && unofficial.toString() == "true"){
+        nextPath = nextPath + "unofficial=true&"
     }
 
 

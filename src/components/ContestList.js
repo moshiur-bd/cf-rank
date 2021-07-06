@@ -2,7 +2,6 @@ import { Spinner, Table, Form, Col, InputGroup, FormControl, Button } from 'reac
 import ContestRow from "./ContestRow"
 import Navigation from "./Navigation"
 import React, { useDebugValue } from 'react'
-import ParseCFUsersFromURL from "../lib/ParseUser"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './ContestList.css';
 import logo from '../logo.svg';
@@ -27,7 +26,7 @@ class ContestList extends React.Component{
 
      constructor(props) {
         super(props);
-         this.state = { data: null, loading: true, needRetry: true, failed: false, searchStr:"" };
+         this.state = { data: null, loading: true, needRetry: true, failed: false, searchStr:"", renderCount:0 };
      }
 
      async actionFetchContests(gym){
@@ -82,21 +81,37 @@ class ContestList extends React.Component{
             <div className="contests" key="contests-div">
                 <Table key = 'contests-table' variant="dark" size="sm" responsive="sm" striped="true">
                     <thead>
+                         <tr>
+                             <th colSpan="2">
+                                 <div className="filter-container">
+                                    <div>
+                                        <FormControl 
+                                            className="sm"
+                                            placeholder="Filter by Tittle" defaultValue={this.state.searchStr}
+                                            onChange={e=> this.state.searchStr = e.target.value}   
+                                        ></FormControl>
+                                    </div>
+                                    <div>
+                                        <Button type="submit" className="btn-light" onClick={(e) => {
+                                            if (this.state.searchStr != "") {
+                                                return this.setState({ renderCount: this.state.renderCount + 1 })
+                                            }
+                                        }}>
+                                        Filter
+                                    </Button>
+                                    </div>
+                                 </div>
+
+                            </th>
+                        </tr>
+
                         <tr>
+                            <th></th>
                             <th>Contest Tittle</th>
                             <th>ID</th>
-
-                            <th ><FormControl autoFocus
-                                 className="mx-3 my-2 w-auto"
-                                 textalign="right"
-                                 placeholder="Filter by Tittle" defaultValue={this.state.searchStr} 
-                                 onMouseMove={(e) => {
-                                     if(this.state.searchStr != e.target.value){
-                                        return this.setState({searchStr: e.target.value})
-                                     }
-                                    }} 
-                                ></FormControl></th>
+                            <th>Codeforces</th>
                         </tr>
+
 
                     </thead>
                     <tbody>
@@ -112,7 +127,7 @@ class ContestList extends React.Component{
                                 }
                                 
                                 
-                                 var elm = <ContestRow ref={this.selectRef[this.refID[r.id]]} key={i} data={r} url={this.props.url} handles={this.props.handles} parsedHandles={this.props.parsedHandles} selected={r.id == this.props.contestID}/>
+                                 var elm = <ContestRow ref={this.selectRef[this.refID[r.id]]} key={i} data={r} url={this.props.url} handles={this.props.handles} parsedHandles={this.props.parsedHandles} unofficial={this.props.unofficial} selected={r.id == this.props.contestID}/>
                                 return elm
                                 })}
                         </RowConatiner>
@@ -155,7 +170,7 @@ class ContestList extends React.Component{
             }
             return false
         }
-        if(nextState && nextState.searchStr != this.state.searchStr){
+        if(nextState && nextState.searchStr != this.state.searchStr || this.state.renderCount != nextState.renderCount){
             return true
         }
         return false

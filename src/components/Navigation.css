@@ -35,6 +35,19 @@
     max-width: 80px;
     padding-left: 2%;
 }
+.unofficial-div{
+    flex-grow: 0;
+    max-width: 60px;
+    padding-left: 2%;
+}
+.unofficial-div span{
+    font-size: 50%;
+}
+.unofficial-div input{
+    width: 50%;
+}
+
+
 .button-div{
     flex-grow: 0;
     max-width: 40px;
@@ -57,4 +70,9 @@
   align-items: center;
   justify-content: center;
   text-align: center;
+}
+
+
+.hide-me div{
+    display: none;
 }
