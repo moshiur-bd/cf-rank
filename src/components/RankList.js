@@ -14,6 +14,9 @@ import { IsSameHandles, UniqueParsedHandles } from "../lib/Handles"
 
 
 const CONTEST_FINISHED = "FINISHED"
+const MAX_ASYNC_HANDLE_PARSER_PER_URL = 2
+
+
 
 class RankList extends React.Component{
     _isMounted = false
@@ -157,12 +160,29 @@ class RankList extends React.Component{
 
     async parseHandlesFromSingleURLAndPages(url) {
         let handles = ""
-        for (let i = 1; i <= 60; i++) {
-            let parsed = await ParseCFUsersFromURL(url + "/page/" + i)
-            var { unq, cnt, tot } = UniqueParsedHandles(parsed, handles)
-            if(cnt > 0){
-                handles += unq;
-            } else break
+        let pageID = 1
+
+        while(true){
+            let promises = []
+            for (let i = 1; i <= MAX_ASYNC_HANDLE_PARSER_PER_URL; i++) {
+                promises.push(ParseCFUsersFromURL(url + "/page/" + pageID))
+                pageID++
+            }
+
+            let pHandles = await Promise.all(promises)
+
+            for (let i = 0; i < pHandles.length; i++) {
+                var { unq, cnt, tot } = UniqueParsedHandles(pHandles[i], handles)
+                if (cnt > 0) {
+                    handles += unq
+                } else {
+                    break
+                }
+            }
+            
+            if(cnt <= 0) {
+                break
+            }
         }
         
         console.table({ log: "Parse handle result per url", url: url, total: tot, handles:handles })
@@ -177,9 +197,8 @@ class RankList extends React.Component{
             if(urls[i] === "") return
             promises.push(this.parseHandlesFromSingleURLAndPages(urls[i]))
         }
-        debugger
+
         let pHandles = await Promise.all(promises)
-        debugger
 
         for(let i = 0; i < pHandles.length; i++){
             var { unq, cnt, tot } = UniqueParsedHandles(pHandles[i], handles)
