@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './RankList.css';
 import logo from '../logo.svg';
 import { GetRanklistUrl} from "../lib/Goto"
+import { IsSameHandles, UniqueParsedHandles } from "../lib/Handles"
 
 
 
@@ -161,12 +162,25 @@ class RankList extends React.Component{
         .then(
             (users) => {
                 console.log("parsed-users", users)
-                if(users === "" || users.length === this.props.parsedHandles.length){
-                    console.log("same as previous parsed-users. skipping")
+                var {unq, cnt} = UniqueParsedHandles(users, this.state.handles)
+                if(cnt > 0 ) {
+                    if (this._isMounted) {
+                        this.props.history.push(GetRanklistUrl(this.props.contestID, this.props.url, this.props.handles, this.props.parsedHandles + unq, this.props.unofficial))
+                    }
                     return
                 }
+
+                console.log("no more users to parse")
+
+                var { unq } = UniqueParsedHandles(this.props.parsedHandles, this.props.handles)
+                if (IsSameHandles(unq, this.props.parsedHandles)) {
+                    console.log("same users as previously parsed. skipping")
+                    return
+                }
+
+                debugger
                 if (this._isMounted){
-                    this.props.history.push(GetRanklistUrl(this.props.contestID, this.props.url, this.props.handles, users))
+                    this.props.history.push(GetRanklistUrl(this.props.contestID, this.props.url, this.props.handles, unq, this.props.unofficial))
                 }
             }
         )
