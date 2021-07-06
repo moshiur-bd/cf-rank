@@ -5,6 +5,11 @@ import './CFHandles.css'
 
 const rankToCSSClassName =(rank) => rank.replace(/\s/g, "");
 
+function validStr(str){
+    if(str === undefined || str === null)
+        return ""
+    return str
+}
 
 export default function RankRow({data, localRank, userInfo}){
     const items = []
@@ -21,7 +26,7 @@ export default function RankRow({data, localRank, userInfo}){
 
     const getUserFullName = (handle) => {
         if (handle in userInfo) {
-            return userInfo[handle].firstName + " " +  userInfo[handle].lastName
+                return validStr(userInfo[handle].firstName) + " " +  validStr(userInfo[handle].lastName)
         }
         return ""
     }
