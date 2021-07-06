@@ -155,46 +155,40 @@ class RankList extends React.Component{
     </div>
     }
 
-
-    allParsedHandles = ""
-
-    async parseHandlesFromSingleURL(url){
-        let users = await ParseCFUsersFromURL(url)
-
-        var { unq, cnt, tot } = UniqueParsedHandles(users, this.allParsedHandles)
-        console.table({ log: "Parse handle result per page", url: url, total: tot, users: users, unique: cnt, uniqueUsers: unq })
-
-        if (cnt > 0) {
-            this.allParsedHandles += unq
-            return true
-        }
-        return false
-    }
-
     async parseHandlesFromSingleURLAndPages(url) {
+        let handles = ""
         for (let i = 1; i <= 60; i++) {
-            let success = await this.parseHandlesFromSingleURL(url + "/page/" + i)
-            if(!success){
-                break
-            }
+            let parsed = await ParseCFUsersFromURL(url + "/page/" + i)
+            var { unq, cnt, tot } = UniqueParsedHandles(parsed, handles)
+            if(cnt > 0){
+                handles += unq;
+            } else break
         }
-        var { unq, cnt, tot } = UniqueParsedHandles(this.allParsedHandles, this.props.handles)
-        console.table({ log: "Parse handle result per url", url: url, total: tot,  handlesInProps: this.props.handles, unique: cnt, uniqueHandlesParsed: unq })
-        return unq
+        
+        console.table({ log: "Parse handle result per url", url: url, total: tot, handles:handles })
+        return handles
     }
 
     async parseHandlesFromAllUrls(url){
-        this.allParsedHandles = ""
+        let handles = ""
         let urls = url.split(";")
+        let promises = []
         for(let i = 0; i < urls.length; i++){
             if(urls[i] === "") return
-            debugger
-            let success = await this.parseHandlesFromSingleURLAndPages(urls[i])
+            promises.push(this.parseHandlesFromSingleURLAndPages(urls[i]))
         }
         debugger
-        var { unq, cnt, tot } = UniqueParsedHandles(this.allParsedHandles, this.props.handles)
-        console.table({ log: "Total handles", total: tot, handlesInProps: this.props.handles, unique: cnt, uniqueHandlesParsed: unq })
-        return unq
+        let pHandles = await Promise.all(promises)
+        debugger
+
+        for(let i = 0; i < pHandles.length; i++){
+            var { unq, cnt, tot } = UniqueParsedHandles(pHandles[i], handles)
+            if(cnt > 0){
+                handles += unq
+            }
+        }
+        console.table({ log: "Total handles", total: tot, handles:handles})
+        return handles
     }
 
     async parseHandles() {
