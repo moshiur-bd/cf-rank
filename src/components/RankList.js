@@ -162,7 +162,7 @@ class RankList extends React.Component{
         let users = await ParseCFUsersFromURL(url)
 
         var { unq, cnt, tot } = UniqueParsedHandles(users, this.allParsedHandles)
-        console.table({ log: "Parse handle result", url: url, total: tot, users: users, unique: cnt, uniqueUsers: unq })
+        console.table({ log: "Parse handle result per page", url: url, total: tot, users: users, unique: cnt, uniqueUsers: unq })
 
         if (cnt > 0) {
             this.allParsedHandles += unq
@@ -171,9 +171,26 @@ class RankList extends React.Component{
         return false
     }
 
+    async parseHandlesFromSingleURLAndPages(url) {
+        for (let i = 1; i <= 60; i++) {
+            let success = await this.parseHandlesFromSingleURL(url + "/page/" + i)
+            if(!success){
+                break
+            }
+        }
+        var { unq, cnt, tot } = UniqueParsedHandles(this.allParsedHandles, this.props.handles)
+        console.table({ log: "Parse handle result per url", url: url, total: tot,  handlesInProps: this.props.handles, unique: cnt, uniqueHandlesParsed: unq })
+        return unq
+    }
+
     async parseHandlesFromAllUrls(url){
         this.allParsedHandles = ""
-        let success = await this.parseHandlesFromSingleURL(url)
+        let urls = url.split(";")
+        for(let i = 0; i < urls.length; i++){
+            if(urls[i] === "") return
+            debugger
+            let success = await this.parseHandlesFromSingleURLAndPages(urls[i])
+        }
         debugger
         var { unq, cnt, tot } = UniqueParsedHandles(this.allParsedHandles, this.props.handles)
         console.table({ log: "Total handles", total: tot, handlesInProps: this.props.handles, unique: cnt, uniqueHandlesParsed: unq })
@@ -181,6 +198,9 @@ class RankList extends React.Component{
     }
 
     async parseHandles() {
+        if(this.props.url === undefined || this.props.url === ""){
+            return
+        }
         this.state.loading = true
         let handles = await this.parseHandlesFromAllUrls(this.props.url)
 

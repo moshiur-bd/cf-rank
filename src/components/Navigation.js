@@ -51,7 +51,7 @@ export default function Navigation(props){
                         size="sm"
                         className="mb-0 org-field"
                         id="inlineFormInput"
-                        placeholder="city/organization cf url"
+                        placeholder="city/organization cf url seperated by ;"
                         // defaultValue={rUrl}
                         value={url}
                         onChange={e => setUrl(e.target.value)}
