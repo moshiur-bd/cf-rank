@@ -70,94 +70,6 @@ class RankList extends React.Component{
         }
     }
 
-    displayProgressBar(relativeTimeSeconds, durationSeconds){
-        if(relativeTimeSeconds == undefined || durationSeconds == undefined){
-            return 
-        }
-        if(relativeTimeSeconds > durationSeconds || relativeTimeSeconds < 0){
-            return
-        }
-        let percent = Math.round((relativeTimeSeconds / durationSeconds) * 100)
-        return <tr>
-            <th colSpan="100">
-                <ProgressBar variant="info" now={percent} animated ></ProgressBar>
-            </th>
-        </tr>
-    }
-
-    render(){
-        let invalidArgs = (this.props.handles == "") && (this.props.url == "")
-
-        if(invalidArgs){
-            this.state.loading = false
-        }
-        if (invalidArgs || this.state.data == null){
-
-        if (this.state.loading == false){
-            return <div>
-                    <div className="stopped">
-                    <br/><br/><br/>
-                    <p>Not Available or Invalid Args!</p>
-                </div>
-            </div>
-
-        } else {
-            return <div>
-                <div className="loading">
-                    <Spinner style={{ width: "100px", height: "100px" }} animation="border" role="status">
-                        <span className="sr-only">Loading...</span>
-                    </Spinner>
-                    <p>Constructing Ranklist...</p>
-                </div>
-            </div>
-        }
-    }
-
-
-    let cf = this.state.data
-    let lastRank = 1
-
-    const currentRank = (i) => {
-        if ( i === 0  || cf.rows[i-1].rank == cf.rows[i].rank){
-            return lastRank
-        }
-        return lastRank = i + 1
-    }
-    
-    return <div>
-        {cf.contest.phase === CONTEST_FINISHED && <img src={logo} className="App-logo" alt="logo" />}
-        {cf.contest.phase !== CONTEST_FINISHED && <img src={logo} className="App-logo-animate" alt="logo" />}
-
-        <div className="con-tittle">
-            {cf.contest.name}
-        </div>
-
-        <div className="ranklist">
-            <Table variant="dark" size="sm" responsive="sm" striped bordered>
-                <thead>
-                    <tr>
-                        <th className="white-hyperlink" colSpan="100">
-                            <a target="_blank" href={"https://codeforces.com/contest/" + this.props.contestID + "/standings"}>{GetContestStatusText(cf.contest.phase)}</a>
-                        </th>
-                    </tr>
-                    {this.displayProgressBar(cf.contest.relativeTimeSeconds, cf.contest.durationSeconds)}
-                    <tr>
-                        <th style={{ "text-align": "left" }}><span className="hash-rank" >#</span></th>
-                        <th style={{ "text-align": "center" }}>Rank</th>
-                        <th style={{ "text-align": "left" }}>Handle</th>
-                        <th >Points</th>
-                        <th style={{ "text-align": "left" }}> </th>
-                        {cf.problems.map(p => <th className="white-hyperlink" title={p.name + " : " + p.rating}><a target="_blank" href={"https://codeforces.com/contest/"+this.props.contestID + "/problem/" + p.index}>{p.index}</a></th>)}
-                    </tr>
-                </thead>
-                <tbody>
-                    {cf.rows.map((r, i) => <RankRow key={i}  localRank={currentRank(i)} data={r} userInfo={this.state.userInfo} />) }
-                </tbody>
-            </Table>
-        </div>
-    </div>
-    }
-
     async parseHandlesFromSingleURLAndPages(url) {
         let handles = ""
         let pageID = 1
@@ -206,7 +118,7 @@ class RankList extends React.Component{
                 handles += unq
             }
         }
-        console.table({ log: "Total handles", total: tot, handles:handles})
+        console.table({ log: "Total handles parsed", total: tot, handles:handles})
         return handles
     }
 
@@ -217,12 +129,19 @@ class RankList extends React.Component{
         this.state.loading = true
         let handles = await this.parseHandlesFromAllUrls(this.props.url)
 
-        if (IsSameHandles(handles, this.props.parsedHandles)){
+        var { unq, cnt, tot } = UniqueParsedHandles(handles, this.props.handles)
+
+        console.table({ log: "Total handles parsed - custom handles", total: tot, totalHandles: handles, uniqueHandles: unq, uniqueCount: cnt })
+
+
+        let isSame = IsSameHandles(unq, this.props.parsedHandles)
+        if (isSame){
             return
         }
 
+
         if (this._isMounted) {
-            this.props.history.push(GetRanklistUrl(this.props.contestID, this.props.url, this.props.handles, handles, this.props.unofficial))
+            this.props.history.push(GetRanklistUrl(this.props.contestID, this.props.url, this.props.handles, unq, this.props.unofficial))
         }
     }
 
@@ -236,16 +155,17 @@ class RankList extends React.Component{
             this.parseRankInterval = setInterval(() => { this.actionFetchRanks(this.state.handles) }, 30000);
         }
     }
+    componentWillUnmount() {
+        clearInterval(this.parseRankInterval);
+        this._isMounted = false;
+    }
 
     componentDidMount() {
         this.setRefreshIfNecessary().then()
         this._isMounted = true
     }
      
-    componentWillUnmount() {
-        clearInterval(this.interval);
-        this._isMounted = false;
-    }
+
 
     shouldComponentUpdate(nextProps, nextState) {
         if (nextState.renderCount != this.state.renderCount) {
@@ -256,6 +176,95 @@ class RankList extends React.Component{
             return false
         }
         return false
+    }
+
+
+    displayProgressBar(relativeTimeSeconds, durationSeconds) {
+        if (relativeTimeSeconds == undefined || durationSeconds == undefined) {
+            return
+        }
+        if (relativeTimeSeconds > durationSeconds || relativeTimeSeconds < 0) {
+            return
+        }
+        let percent = Math.round((relativeTimeSeconds / durationSeconds) * 100)
+        return <tr>
+            <th colSpan="100">
+                <ProgressBar variant="info" now={percent} animated ></ProgressBar>
+            </th>
+        </tr>
+    }
+
+    render() {
+        let invalidArgs = (this.props.handles == "") && (this.props.url == "")
+
+        if (invalidArgs) {
+            this.state.loading = false
+        }
+        if (invalidArgs || this.state.data == null) {
+
+            if (this.state.loading == false) {
+                return <div>
+                    <div className="stopped">
+                        <br /><br /><br />
+                        <p>Not Available or Invalid Args!</p>
+                    </div>
+                </div>
+
+            } else {
+                return <div>
+                    <div className="loading">
+                        <Spinner style={{ width: "100px", height: "100px" }} animation="border" role="status">
+                            <span className="sr-only">Loading...</span>
+                        </Spinner>
+                        <p>Constructing Ranklist...</p>
+                    </div>
+                </div>
+            }
+        }
+
+
+        let cf = this.state.data
+        let lastRank = 1
+
+        const currentRank = (i) => {
+            if (i === 0 || cf.rows[i - 1].rank == cf.rows[i].rank) {
+                return lastRank
+            }
+            return lastRank = i + 1
+        }
+
+        return <div>
+            {cf.contest.phase === CONTEST_FINISHED && <img src={logo} className="App-logo" alt="logo" />}
+            {cf.contest.phase !== CONTEST_FINISHED && <img src={logo} className="App-logo-animate" alt="logo" />}
+
+            <div className="con-tittle">
+                {cf.contest.name}
+            </div>
+
+            <div className="ranklist">
+                <Table variant="dark" size="sm" responsive="sm" striped bordered>
+                    <thead>
+                        <tr>
+                            <th className="white-hyperlink" colSpan="100">
+                                <a target="_blank" href={"https://codeforces.com/contest/" + this.props.contestID + "/standings"}>{GetContestStatusText(cf.contest.phase)}</a>
+                            </th>
+                        </tr>
+                        {this.displayProgressBar(cf.contest.relativeTimeSeconds, cf.contest.durationSeconds)}
+                        <tr>
+                            <th style={{ "text-align": "left" }}><span className="hash-rank" >#</span></th>
+                            <th style={{ "text-align": "center" }}>Rank</th>
+                            <th style={{ "text-align": "left" }}>Handle</th>
+                            <th >Points</th>
+                            <th style={{ "text-align": "left" }}> </th>
+                            {cf.problems.map(p => <th className="white-hyperlink" title={p.name + " : " + p.rating}><a target="_blank" href={"https://codeforces.com/contest/" + this.props.contestID + "/problem/" + p.index}>{p.index}</a></th>)}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {cf.rows.map((r, i) => <RankRow key={i} localRank={currentRank(i)} data={r} userInfo={this.state.userInfo} />)}
+                    </tbody>
+                </Table>
+            </div>
+        </div>
     }
 }
 
