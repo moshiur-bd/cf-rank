@@ -45,7 +45,7 @@ export function UniqueParsedHandles(hParsed, oldHandles){
     return {
         cnt: diff.size,
         unq: HandleSetToString(diff),
-        tot: ph.size + oh.size - diff.size - 1
+        tot: oh.size + diff.size - 1
     }
 }
 

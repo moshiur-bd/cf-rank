@@ -156,34 +156,41 @@ class RankList extends React.Component{
     }
 
 
+    allParsedHandles = ""
+
+    async parseHandlesFromSingleURL(url){
+        let users = await ParseCFUsersFromURL(url)
+
+        var { unq, cnt, tot } = UniqueParsedHandles(users, this.allParsedHandles)
+        console.table({ log: "Parse handle result", url: url, total: tot, users: users, unique: cnt, uniqueUsers: unq })
+
+        if (cnt > 0) {
+            this.allParsedHandles += unq
+            return true
+        }
+        return false
+    }
+
+    async parseHandlesFromAllUrls(url){
+        this.allParsedHandles = ""
+        let success = await this.parseHandlesFromSingleURL(url)
+        debugger
+        var { unq, cnt, tot } = UniqueParsedHandles(this.allParsedHandles, this.props.handles)
+        console.table({ log: "Total handles", total: tot, handlesInProps: this.props.handles, unique: cnt, uniqueHandlesParsed: unq })
+        return unq
+    }
+
     async parseHandles() {
         this.state.loading = true
-        return ParseCFUsersFromURL(this.props.url)
-        .then(
-            (users) => {
-                console.log("parsed-users", users)
-                var {unq, cnt} = UniqueParsedHandles(users, this.state.handles)
-                if(cnt > 0 ) {
-                    if (this._isMounted) {
-                        this.props.history.push(GetRanklistUrl(this.props.contestID, this.props.url, this.props.handles, this.props.parsedHandles + unq, this.props.unofficial))
-                    }
-                    return
-                }
+        let handles = await this.parseHandlesFromAllUrls(this.props.url)
 
-                console.log("no more users to parse")
+        if (IsSameHandles(handles, this.props.parsedHandles)){
+            return
+        }
 
-                var { unq } = UniqueParsedHandles(this.props.parsedHandles, this.props.handles)
-                if (IsSameHandles(unq, this.props.parsedHandles)) {
-                    console.log("same users as previously parsed. skipping")
-                    return
-                }
-
-                debugger
-                if (this._isMounted){
-                    this.props.history.push(GetRanklistUrl(this.props.contestID, this.props.url, this.props.handles, unq, this.props.unofficial))
-                }
-            }
-        )
+        if (this._isMounted) {
+            this.props.history.push(GetRanklistUrl(this.props.contestID, this.props.url, this.props.handles, handles, this.props.unofficial))
+        }
     }
 
     async setRefreshIfNecessary(){
