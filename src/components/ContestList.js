@@ -52,6 +52,87 @@ class ContestList extends React.Component{
          this.state.loading = false
          this.forceUpdate()
      }
+
+
+     renderOrgs(){
+         return <div className="orgs content-div" key="orgs-div">
+             <Table key='orgs-table' variant="dark" size="sm" responsive="sm" striped="true">
+                 <thead>
+                     <tr>
+
+                     </tr>
+                     <tr>
+                         <th></th>
+                         <th>Org Name</th>
+                         <th></th>
+                         <th>Codeforces</th>
+                     </tr>
+                 </thead>
+             </Table>
+         </div>
+     }
+
+     renderContests(){
+         var cf = this.state.data
+
+
+         return <div className="contests content-div" key="contests-div">
+             <Table key='contests-table' variant="dark" size="sm" responsive="sm" striped="true">
+                 <thead>
+                     <tr>
+                         <th colSpan="2">
+                             <div className="filter-container">
+                                 <div>
+                                     <FormControl
+                                         className="sm"
+                                         placeholder="Filter by Tittle" defaultValue={this.state.searchStr}
+                                         onChange={e => this.state.searchStr = e.target.value}
+                                     ></FormControl>
+                                 </div>
+                                 <div>
+                                     <Button type="submit" className="btn-light" onClick={(e) => {
+                                         if (this.state.searchStr != "") {
+                                             return this.setState({ renderCount: this.state.renderCount + 1 })
+                                         }
+                                     }}>
+                                         Filter
+                                     </Button>
+                                 </div>
+                             </div>
+
+                         </th>
+                     </tr>
+
+                     <tr>
+                         <th></th>
+                         <th>Contest Tittle</th>
+                         <th>ID</th>
+                         <th>Codeforces</th>
+                     </tr>
+
+
+                 </thead>
+                 <tbody>
+                     <RowConatiner key={"search-str" + this.state.searchStr} searchStr={this.state.searchStr}>
+                         {cf.map((r, i) => {
+                             if (r.phase === "BEFORE") {
+                                 return
+                             }
+
+                             if (!(r.id in this.refID)) {
+                                 this.selectRef.push(React.createRef())
+                                 this.refID[r.id] = this.selectRef.length - 1
+                             }
+
+
+                             var elm = <ContestRow ref={this.selectRef[this.refID[r.id]]} key={i} data={r} url={this.props.url} handles={this.props.handles} parsedHandles={this.props.parsedHandles} unofficial={this.props.unofficial} selected={r.id == this.props.contestID} />
+                             return elm
+                         })}
+                     </RowConatiner>
+                 </tbody>
+             </Table>
+         </div>
+     }
      
 
      render(){
@@ -76,64 +157,10 @@ class ContestList extends React.Component{
             }
         }
 
-        var cf = this.state.data
-         return <div key="contests-list-div" >
-            <div className="contests" key="contests-div">
-                <Table key = 'contests-table' variant="dark" size="sm" responsive="sm" striped="true">
-                    <thead>
-                         <tr>
-                             <th colSpan="2">
-                                 <div className="filter-container">
-                                    <div>
-                                        <FormControl 
-                                            className="sm"
-                                            placeholder="Filter by Tittle" defaultValue={this.state.searchStr}
-                                            onChange={e=> this.state.searchStr = e.target.value}   
-                                        ></FormControl>
-                                    </div>
-                                    <div>
-                                        <Button type="submit" className="btn-light" onClick={(e) => {
-                                            if (this.state.searchStr != "") {
-                                                return this.setState({ renderCount: this.state.renderCount + 1 })
-                                            }
-                                        }}>
-                                        Filter
-                                    </Button>
-                                    </div>
-                                 </div>
-
-                            </th>
-                        </tr>
-
-                        <tr>
-                            <th></th>
-                            <th>Contest Tittle</th>
-                            <th>ID</th>
-                            <th>Codeforces</th>
-                        </tr>
-
-
-                    </thead>
-                    <tbody>
-                         <RowConatiner key={"search-str" +this.state.searchStr} searchStr={this.state.searchStr}>
-                             {cf.map((r, i) =>{
-                                if( r.phase === "BEFORE" ){
-                                    return
-                                }
-                                
-                                if (!(r.id in this.refID)){
-                                    this.selectRef.push(React.createRef())
-                                    this.refID[r.id] = this.selectRef.length - 1                                    
-                                }
-                                
-                                
-                                 var elm = <ContestRow ref={this.selectRef[this.refID[r.id]]} key={i} data={r} url={this.props.url} handles={this.props.handles} parsedHandles={this.props.parsedHandles} unofficial={this.props.unofficial} selected={r.id == this.props.contestID}/>
-                                return elm
-                                })}
-                        </RowConatiner>
-                    </tbody>
-                </Table>
-            </div>
+         return <div key="content-list-div" className="content-list-div" >
+            {/* {this.renderOrgs()} */}
+            {this.renderContests()}
+            
         </div>
      }
 

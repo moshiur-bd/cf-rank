@@ -20,3 +20,19 @@
     text-align: center;
 }
 
+.content-list-div{
+    display: flex;
+    flex-flow: col wrap;
+    /* justify-content: flex-start; */
+    align-items: left;
+    justify-content: left;
+    text-align: center;
+}
+
+.content-div{
+    margin: 5% 5%;
+}
+
+.contests-div{
+
+}
