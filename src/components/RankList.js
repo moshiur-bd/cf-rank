@@ -256,7 +256,12 @@ class RankList extends React.Component{
                             <th style={{ "text-align": "left" }}>Handle</th>
                             <th> Score </th>
                             <th style={{ "text-align": "left" }}> </th>
-                            {cf.problems.map(p => <th className="white-hyperlink" title={p.name + " : " + p.rating}><a target="_blank" href={"https://codeforces.com/contest/" + this.props.contestID + "/problem/" + p.index}>{p.index}</a></th>)}
+                            {cf.problems.map(p => { 
+                                let rating = 1;
+                                if(p.rating !== undefined){
+                                    rating = p.rating
+                                }
+                                return <th className="white-hyperlink" title={p.name + " : " + rating}><a target="_blank" href={"https://codeforces.com/contest/" + this.props.contestID + "/problem/" + p.index}>{p.index}</a></th>})}
                         </tr>
                     </thead>
                     <tbody>

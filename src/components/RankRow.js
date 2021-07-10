@@ -38,6 +38,8 @@ export default function RankRow({data, localRank, userInfo}){
 
     const rejectedCount = (r) => <span className="cell-rejected">{-r.rejectedAttemptCount}</span>
 
+    let havingPenalty = (data.rank > 0 && data.penalty > 0)
+
     return (<tr className="rank-font">
         <td style={{ "text-align": "left" }}><span className="hash-rank" >{data.rank > 0 && localRank}</span></td>
         <td style={{ "text-align": "center" }}>{data.rank > 0 && data.rank}</td>
@@ -49,7 +51,13 @@ export default function RankRow({data, localRank, userInfo}){
              </a></div> )} </div>
         </td>
         
-        <td ><span title="points">{data.points}</span> {(data.rank > 0 && data.penalty > 0) &&  <span title="penalty" className="cell-rejected">{data.penalty} </span>}</td>
+        <td >
+            <div className="rank-cell-div">
+                {havingPenalty && <div className="rank-side-content"></div>}
+                <div className="rank-main-content"><span className="total-points" title="total points">{data.points}</span> </div>
+                {havingPenalty &&  <div className="rank-side-content"><span title="total penalty" className="cell-rejected">{data.penalty} </span> </div>}
+            </div>
+        </td>
         <td ></td>
         {data.problemResults.map(r => {
             return <td>
