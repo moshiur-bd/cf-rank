@@ -1,6 +1,6 @@
-# Codeforces Awesome Ranklist
+# Codeforces Custom Ranklist
 
-This project provides a cool ranklist for [codeforces](https://codeforces.com) contest.
+This project provides a custom ranklist for [codeforces](https://codeforces.com) contest.
 
 ## Live at
 https://moshiur-bd.github.io/cf-rank
