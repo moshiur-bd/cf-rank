@@ -254,7 +254,7 @@ class RankList extends React.Component{
                             <th style={{ "text-align": "left" }}><span className="hash-rank" >#</span></th>
                             <th style={{ "text-align": "center" }}>Rank</th>
                             <th style={{ "text-align": "left" }}>Handle</th>
-                            <th >Points</th>
+                            <th> Score </th>
                             <th style={{ "text-align": "left" }}> </th>
                             {cf.problems.map(p => <th className="white-hyperlink" title={p.name + " : " + p.rating}><a target="_blank" href={"https://codeforces.com/contest/" + this.props.contestID + "/problem/" + p.index}>{p.index}</a></th>)}
                         </tr>
