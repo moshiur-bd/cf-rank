@@ -49,7 +49,7 @@ export default function RankRow({data, localRank, userInfo}){
              </a></div> )} </div>
         </td>
         
-        <td ><span title="points">{data.points}</span> {data.penalty > 0 &&  <span title="penalty" className="cell-rejected">{data.penalty} </span>}</td>
+        <td ><span title="points">{data.points}</span> {(data.rank > 0 && data.penalty > 0) &&  <span title="penalty" className="cell-rejected">{data.penalty} </span>}</td>
         <td ></td>
         {data.problemResults.map(r => {
             return <td>
