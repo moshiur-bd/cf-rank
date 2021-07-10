@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import React from 'react';
 import { ToggleButton } from 'react-bootstrap';
 import {BuildUrl} from "../lib/UrlInfo"
+import "./ContestRow.css"
 
 class ContestRow extends React.Component {
     constructor(props) {
@@ -23,7 +24,7 @@ class ContestRow extends React.Component {
 
         return (<tr>
             <td ><Link to={BuildUrl('/selector/contests/', data.id, this.props.url, this.props.handles, this.props.parsedHandles, this.props.unofficial)}>
-                <div ref={this.props.innerRef} > <input type="checkbox" checked={this.props.selected}/> </div></Link></td>
+                <div className="div-checkbox-selector btn-light one-elm-flex" ref={this.props.innerRef} > <input type="checkbox" checked={this.props.selected}/> </div></Link></td>
             <td textAlign="left">{data.name}</td>
             <td textAlign="left">{data.id}</td>
             <td textAlign="center"><a href={"https://codeforces.com/contest/" + data.id} target="_blank">link</a></td>
