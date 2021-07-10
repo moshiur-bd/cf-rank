@@ -190,8 +190,8 @@ class ContestList extends React.Component{
     shouldComponentUpdate(nextProps, nextState) {
         if(nextProps != null && ( nextProps.url != this.props.url || nextProps.contestID != this.props.contestID)){
             try {
-                this.selectRef[this.refID[Number(nextProps.contestID)]].current.innerText = "SELECTED"
-                this.selectRef[this.refID[Number(this.props.contestID)]].current.innerText = "select"
+                this.selectRef[this.refID[Number(nextProps.contestID)]].current.innerHTML = `<input type="checkbox" checked="true">`
+                this.selectRef[this.refID[Number(this.props.contestID)]].current.innerHTML = `<input type="checkbox">`
             } catch(e){ // may fail due to filter 
 
             }
