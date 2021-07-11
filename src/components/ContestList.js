@@ -5,6 +5,7 @@ import React, { useDebugValue } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './ContestList.css';
 import logo from '../logo.svg';
+import { ParseCFOrgs } from '../lib/CF'
 
 
 
@@ -55,21 +56,30 @@ class ContestList extends React.Component{
 
 
      renderOrgs(){
-         return <div className="orgs content-div" key="orgs-div">
-             <Table key='orgs-table' variant="dark" size="sm" responsive="sm" striped="true">
-                 <thead>
-                     <tr>
+        
+         let orgs = [ "soon will be filled" ]
+        if(this.state.orgs !== null && this.state.orgs !== undefined){
+            debugger
+            orgs = this.state.orgs
+        }
 
-                     </tr>
-                     <tr>
-                         <th></th>
-                         <th>Org Name</th>
-                         <th></th>
-                         <th>Codeforces</th>
-                     </tr>
-                 </thead>
-             </Table>
-         </div>
+        return <div className="orgs content-div" key="orgs-div">
+            <Table key='orgs-table' variant="dark" size="sm" responsive="sm" striped="true">
+                <thead>
+                    <tr>
+
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th>Org Name</th>
+                        <th>id</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {orgs.map(r => <tr><td></td><td>{r.name}</td> </tr>)}
+                </tbody>
+            </Table>
+        </div>
      }
 
      renderContests(){
@@ -158,7 +168,7 @@ class ContestList extends React.Component{
         }
 
          return <div key="content-list-div" className="content-list-div" >
-            {/* {this.renderOrgs()} */}
+            {this.renderOrgs()}
             {this.renderContests()}
             
         </div>
@@ -175,7 +185,18 @@ class ContestList extends React.Component{
         .catch(e => alert(e))
     }
 
+    async parseOrgs(){
+        let orgs = await ParseCFOrgs()
+        debugger
+        this.setState({
+            orgs:orgs,
+            renderCount: this.state.renderCount + 1
+        })
+    }
+
     async setRefreshIfNecessary(){
+        this.parseOrgs()
+
         await this.repeatedWork()
     }
 
