@@ -23,9 +23,8 @@
 .content-list-div{
     display: flex;
     flex-flow: col wrap;
-    /* justify-content: flex-start; */
-    align-items: left;
-    justify-content: left;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     font-size: 80%;
 }

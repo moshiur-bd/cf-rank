@@ -1,3 +1,5 @@
+
+
 const ProxyHost = `https://be-beam.swiftshopbd.com/`
 
 
@@ -58,12 +60,13 @@ export async function ParseCFOrgs() {
 
             debugger
             let resp = []
+            let skipFirst = true
             for (const f of found) {
-                let orgID = parseInt(f[1])
-                if(isNaN(orgID)){
+                if(skipFirst){
+                    skipFirst = false
                     continue
                 }
-                resp.push({name:f[2], url:url+"/organization/" + orgID})
+                resp.push({name:f[2], url:url+"/organization/" + f[1]})
             }
             return resp
         })
@@ -72,6 +75,21 @@ export async function ParseCFOrgs() {
             return ""
         });
 }
+
+export async function ParseCFOrgsCached() {
+    return fetch("orgs.json", {
+        headers:{
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    })
+    .then((response) => {
+        return response.json()
+    })
+}
+
+
+
 
 
 

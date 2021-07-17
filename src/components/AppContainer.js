@@ -1,5 +1,6 @@
 import RankListLayout from './RankListLayout'
 import ContestListLayout from './ContestListLayout'
+import OrgsListLayout from './OrgsListLayout'
 import Navigation from './Navigation'
 import { HashRouter, Switch, Route, Redirect } from "react-router-dom"
 import { useState } from 'react'
@@ -11,8 +12,9 @@ export default function AppContainer(){
             <Switch key='switch-route-sw'>
                 {/* <Route path="/contest/:contestID" component={RankList} /> */}
                 <Route key='route-contest-list' path="/selector/contests/:contestID" render={(props) => <ContestListLayout key="contest-list-layout" {...props}/>} />
+                <Route key='route-orgs-list' path="/selector/orgs/:contestID" render={(props) => <OrgsListLayout key="orgs-list-layout" {...props}/>} />
                 <Route key='route-rank-list' path="/contest/:contestID" render={(props) => <RankListLayout key="single-rank-instance" {...props}/>} />
-                <Redirect from="/" to="/contest/1541?url=https://codeforces.com/ratings/organization/3403" component={ContestListLayout} />
+                <Redirect from="/" to="/contest/1541?url=https://codeforces.com/ratings/organization/3403"/>
             </Switch>
         </div>
     </HashRouter>
