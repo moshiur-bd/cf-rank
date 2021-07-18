@@ -66,11 +66,11 @@ class OrgsList extends React.Component{
                 <thead>
                     <tr>
                         <th colSpan="20">
-                            <div className="filter-container">
+                            <div className="filter-container flex-input-div">
                                 <div>
                                     <FormControl
                                         className="sm"
-                                        placeholder="Filter by Org"
+                                        placeholder="Filter by Org Name"
                                         onChange={ e => {
                                             this.state.searchStr = e.target.value
                                             this.onFilter(e)

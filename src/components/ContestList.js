@@ -106,7 +106,7 @@ class ContestList extends React.Component{
                  <thead>
                      <tr>
                          <th colSpan="20">
-                             <div className="filter-container">
+                             <div className="filter-container flex-input-div">
                                  <div>
                                      <FormControl
                                          className="sm"
