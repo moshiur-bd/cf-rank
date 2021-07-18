@@ -12,7 +12,6 @@
 }
 
 .filter-container{
-    height: calc(.8em + .5rem + 2px);
     display: flex;
     flex-flow: row wrap;
     align-items: left;

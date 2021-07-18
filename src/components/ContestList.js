@@ -109,13 +109,12 @@ class ContestList extends React.Component{
                              <div className="filter-container flex-input-div">
                                  <div>
                                      <FormControl
-                                         className="sm"
-                                         placeholder="Filter by Tittle" defaultValue={this.state.searchStr}
-                                         onChange={e => {
-                                            this.state.searchStr = e.target.value
-                                            this.onFilter(e)
-                                        }}
-                                     ></FormControl>
+                                        size="sm"
+                                        placeholder="Filter by Tittle" defaultValue={this.state.searchStr}
+                                        onChange={e => {
+                                        this.state.searchStr = e.target.value
+                                        this.onFilter(e)
+                                        }}></FormControl>
                                  </div>
                              </div>
 
