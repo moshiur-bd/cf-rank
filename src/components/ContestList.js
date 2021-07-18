@@ -7,8 +7,8 @@ import './ContestList.css';
 import logo from '../logo.svg';
 import { ParseCFOrgs, ParseCFOrgsCached } from '../lib/CF'
 
-import { Link } from 'react-router-dom'
-import { BuildUrl } from "../lib/UrlInfo"
+import { GetContestUrl } from "../lib/Goto"
+
 
 
 
@@ -24,7 +24,8 @@ class ContestList extends React.Component{
      constructor(props) {
         super(props);
         this.state = { data: null, loading: true, needRetry: true, failed: false, searchStr:"", renderCount:0 };
-        this.onFilter = this.onFilter.bind(this);
+         this.onFilter = this.onFilter.bind(this);
+         this.handleCheckbox = this.handleCheckbox.bind(this);
 
      }
 
@@ -52,6 +53,19 @@ class ContestList extends React.Component{
          this.forceUpdate()
      }
 
+    handleCheckbox(e) {
+        let selContest = e.target.value
+        if (!e.target.checked) {
+            e.target.checked = true
+            return
+        }
+        let oldRef = this.selectRef[this.refID[Number(this.props.contestID)]].current
+
+        oldRef.children[0].children[0].children[0].checked = false
+        this.props.history.push(GetContestUrl(selContest, this.props.url, this.props.handles, this.props.parsedHandles, this.props.unofficial))
+    }
+
+
     onFilter(e){
         debugger
         if (this.state.searchStr == undefined) {
@@ -71,6 +85,20 @@ class ContestList extends React.Component{
             }
         })
         
+    }
+
+    renderRow(row) {
+        if (row == null || row == undefined) {
+            return <tr><td>called with null</td></tr>
+        }
+
+        return (<tr ref={this.selectRef[this.refID[row.id]]} >
+            <td > <div className="div-checkbox-selector one-elm-flex" > <input type="checkbox" onChange={this.handleCheckbox} defaultValue={row.id} defaultChecked={row.id == this.props.contestID} /> </div></td>
+            <td textAlign="left">{row.name}</td>
+            <td textAlign="left">{row.id}</td>
+            <td textAlign="center"><a href={"https://codeforces.com/contest/" + row.id} target="_blank">link</a></td>
+        </tr>
+        )
     }
 
      renderContests(){
@@ -118,9 +146,7 @@ class ContestList extends React.Component{
                                  this.refID[r.id] = this.selectRef.length - 1
                              }
 
-
-                             var elm = <ContestRow className="hidden-row" ref={this.selectRef[this.refID[r.id]]} key={i} data={r} url={this.props.url} handles={this.props.handles} parsedHandles={this.props.parsedHandles} unofficial={this.props.unofficial} selected={r.id == this.props.contestID} />
-                             return elm
+                             return this.renderRow(r)
                          })}
                  </tbody>
              </Table>
