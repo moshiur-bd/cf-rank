@@ -12,14 +12,6 @@ import { Link } from 'react-router-dom'
 import { GetOrgsUrl } from "../lib/Goto"
 
 
-
-function RowConatiner({ searchStr, children}){
-    return React.Children.toArray(children).filter( (child) =>{
-        return !searchStr || searchStr == "" || child.props.data.name.toLowerCase().includes(searchStr.toLowerCase())
-    })
-}
-
-
 class OrgsList extends React.Component{
     selectRef = []
     refID = {}
@@ -54,11 +46,22 @@ class OrgsList extends React.Component{
             <Table key='orgs-table' variant="dark" size="sm" responsive="sm" striped="true">
                 <thead>
                     <tr>
+                        <th colSpan="20">
+                            <div className="filter-container">
+                                <div>
+                                    <FormControl
+                                        className="sm"
+                                        placeholder="Filter by Org"
+                                    ></FormControl>
+                                </div>
+                            </div>
+
+                        </th>
                     </tr>
                     <tr>
                         <th></th>
                         <th></th>
-                        <th colSpan="200">Org Name</th>
+                        <th>Org Name</th>
                         <th></th>
                     </tr>
                 </thead>

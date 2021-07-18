@@ -23,7 +23,9 @@ class ContestList extends React.Component{
 
      constructor(props) {
         super(props);
-         this.state = { data: null, loading: true, needRetry: true, failed: false, searchStr:"", renderCount:0 };
+        this.state = { data: null, loading: true, needRetry: true, failed: false, searchStr:"", renderCount:0 };
+        this.onFilter = this.onFilter.bind(this);
+
      }
 
      async actionFetchContests(gym){
@@ -50,6 +52,27 @@ class ContestList extends React.Component{
          this.forceUpdate()
      }
 
+    onFilter(e){
+        debugger
+        if (this.state.searchStr == undefined) {
+            this.state.searchStr = ""
+        }
+        this.state.data.map((contest) => {
+            debugger
+            let rID = this.refID[contest.id]
+            if (rID === undefined) {
+                return
+            }
+            let r = this.selectRef[rID].current
+            if (contest.name.toLowerCase().includes(this.state.searchStr.toLowerCase())) {
+                r.hidden = false
+            } else {
+                r.hidden = true
+            }
+        })
+        
+    }
+
      renderContests(){
          var cf = this.state.data
 
@@ -64,30 +87,11 @@ class ContestList extends React.Component{
                                      <FormControl
                                          className="sm"
                                          placeholder="Filter by Tittle" defaultValue={this.state.searchStr}
-                                         onChange={e => this.state.searchStr = e.target.value}
+                                         onChange={e => {
+                                            this.state.searchStr = e.target.value
+                                            this.onFilter(e)
+                                        }}
                                      ></FormControl>
-                                 </div>
-                                 <div>
-                                     <Button type="submit" className="btn-light" onClick={(e) => {
-                                        if (this.state.searchStr == undefined) {
-                                            this.state.searchStr = ""
-                                        }
-                                        cf.map( (contest) => {
-                                            debugger
-                                            let rID = this.refID[contest.id]
-                                            if(rID === undefined){
-                                                return
-                                            }
-                                            let r = this.selectRef[rID].current
-                                            if (contest.name.toLowerCase().includes(this.state.searchStr.toLowerCase())){
-                                                r.hidden = false
-                                            } else {
-                                                r.hidden = true
-                                            }
-                                        })
-                                        }}>
-                                         Filter
-                                     </Button>
                                  </div>
                              </div>
 
