@@ -17,6 +17,7 @@ class OrgsList extends React.Component{
      constructor(props) {
         super(props);
         this.handleCheckbox = this.handleCheckbox.bind(this);
+        this.onFilter = this.onFilter.bind(this);
         this.state = { data: null, loading: true, urlSet: new Set(props.url.split(";")), failed: false, searchStr:"", renderCount:0 };
      }
 
@@ -32,6 +33,28 @@ class OrgsList extends React.Component{
         console.log("marked", selOrg, e.target.checked, "url", compiledUrl)
         this.props.history.push(GetOrgsUrl(this.props.contestID, compiledUrl, this.props.handles, this.props.parsedHandles, this.props.unofficial))
      }
+
+
+    onFilter(e) {
+        debugger
+        if (this.state.searchStr == undefined) {
+            this.state.searchStr = ""
+        }
+        this.state.data.map((org) => {
+            debugger
+            let rID = this.refID[org.url]
+            if (rID === undefined) {
+                return
+            }
+            let r = this.selectRef[rID].current
+            if (org.name.toLowerCase().includes(this.state.searchStr.toLowerCase())) {
+                r.hidden = false
+            } else {
+                r.hidden = true
+            }
+        })
+
+    }
 
      renderOrgs(){
         
@@ -50,6 +73,10 @@ class OrgsList extends React.Component{
                                     <FormControl
                                         className="sm"
                                         placeholder="Filter by Org"
+                                        onChange={ e => {
+                                            this.state.searchStr = e.target.value
+                                            this.onFilter(e)
+                                        }}
                                     ></FormControl>
                                 </div>
                             </div>
@@ -64,12 +91,16 @@ class OrgsList extends React.Component{
                     </tr>
                 </thead>
                 <tbody>
-                    {orgs.map(r => <tr>
+                    {orgs.map(r =>{ 
+                    if (!(r.url in this.refID)) {
+                        this.selectRef.push(React.createRef())
+                        this.refID[r.url] = this.selectRef.length - 1
+                    }
+                    return <tr ref={this.selectRef[this.refID[r.url]]}>
                         <td >
-                            <div className="div-checkbox-selector one-elm-flex"> <input type="checkbox" onChange={this.handleCheckbox.bind(this)} value={r.url} defaultChecked={this.state.urlSet.has(r.url)}/> </div></td>
+                            <div className="div-checkbox-selector one-elm-flex"> <input type="checkbox" onChange={this.handleCheckbox} value={r.url} defaultChecked={this.state.urlSet.has(r.url)}/> </div></td>
                         <td></td><td colSpan="200">{r.name}</td>
-                        
-                    </tr>)}
+                    </tr>})}
                 </tbody>
             </Table>
         </div>
