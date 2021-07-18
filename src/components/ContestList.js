@@ -1,6 +1,4 @@
 import { Spinner, Table, Form, Col, InputGroup, FormControl, Button } from 'react-bootstrap'
-import ContestRow from "./ContestRow"
-import Navigation from "./Navigation"
 import React, { useDebugValue } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './ContestList.css';
@@ -205,24 +203,7 @@ class ContestList extends React.Component{
      }
 
     shouldComponentUpdate(nextProps, nextState) {
-        if(nextProps != null && ( nextProps.url != this.props.url || nextProps.contestID != this.props.contestID)){
-            try {
-                let oldRef = this.selectRef[this.refID[Number(this.props.contestID)]].current
-                let newRef = this.selectRef[this.refID[Number(nextProps.contestID)]].current
-                debugger
-                //oldRef.hidden = true
-
-                // newRef.innerHTML = `<input type="checkbox" checked="true">`
-                
-                oldRef.children[0].children[0].children[0].children[0].checked = false
-                newRef.children[0].children[0].children[0].innerHTML = `<input type="checkbox" checked="true">`
-                //oldRef.innerHTML = `<input type="checkbox">`
-            } catch(e){ // may fail due to filter 
-
-            }
-            return false
-        }
-        if(nextState && nextState.searchStr != this.state.searchStr || this.state.renderCount != nextState.renderCount){
+        if(nextState && this.state.renderCount != nextState.renderCount){
             return true
         }
         return false

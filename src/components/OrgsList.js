@@ -1,6 +1,4 @@
 import { Spinner, Table, Form, Col, InputGroup, FormControl, Button } from 'react-bootstrap'
-import ContestRow from "./ContestRow"
-import Navigation from "./Navigation"
 import React, { useDebugValue } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './OrgsList.css';

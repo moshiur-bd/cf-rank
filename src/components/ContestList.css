@@ -33,6 +33,8 @@
     margin: 5% 5%;
 }
 
-.contests-div{
-
+.div-checkbox-selector input{
+    margin: auto;
+    width: calc(.8em + .5rem + 2px);
+    height: calc(.8em + .5rem + 2px);
 }
