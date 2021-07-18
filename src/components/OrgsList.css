@@ -36,12 +36,14 @@
 }
 
 .div-checkbox-selector input{
-    margin: auto;
     width: calc(.8em + .5rem + 2px);
     height: calc(.8em + .5rem + 2px);
 }
 
 
-.org-table{
-    width: 100%;
+.checkbox-org{
+  display: flex;
+  align-items: left;
+  justify-content: left;
+  text-align: left;
 }

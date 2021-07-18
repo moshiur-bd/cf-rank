@@ -89,7 +89,7 @@ class ContestList extends React.Component{
         }
 
         return (<tr ref={this.selectRef[this.refID[row.id]]} >
-            <td > <div className="div-checkbox-selector one-elm-flex" > <input type="checkbox" onChange={this.handleCheckbox} defaultValue={row.id} defaultChecked={row.id == this.props.contestID} /> </div></td>
+            <td textAlign="left"> <div className="div-checkbox-selector checkbox-contest" > <input type="checkbox" onChange={this.handleCheckbox} defaultValue={row.id} defaultChecked={row.id == this.props.contestID} /> </div></td>
             <td textAlign="left">{row.name}</td>
             <td textAlign="left">{row.id}</td>
             <td textAlign="center"><a href={"https://codeforces.com/contest/" + row.id} target="_blank">link</a></td>

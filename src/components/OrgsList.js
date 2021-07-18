@@ -96,7 +96,7 @@ class OrgsList extends React.Component{
                     }
                     return <tr ref={this.selectRef[this.refID[r.url]]}>
                         <td >
-                            <div className="div-checkbox-selector one-elm-flex"> <input type="checkbox" onChange={this.handleCheckbox} value={r.url} defaultChecked={this.state.urlSet.has(r.url)}/> </div></td>
+                            <div className="div-checkbox-selector checkbox-org"> <input type="checkbox" onChange={this.handleCheckbox} value={r.url} defaultChecked={this.state.urlSet.has(r.url)}/> </div></td>
                         <td></td><td colSpan="200">{r.name}</td>
                     </tr>})}
                 </tbody>
