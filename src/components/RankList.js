@@ -4,7 +4,7 @@ import Navigation from "./Navigation"
 import React from 'react'
 import { ParseCFUsersFromURL, FetchRanks, GetContestStatusText, FetchUserInfo} from "../lib/CF"
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './RankList.css';
+import './css/RankList.css';
 import logo from '../logo.svg';
 import { GetRanklistUrl} from "../lib/Goto"
 import { IsSameHandles, UniqueParsedHandles } from "../lib/Handles"

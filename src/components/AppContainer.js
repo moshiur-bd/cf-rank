@@ -1,9 +1,7 @@
 import RankListLayout from './RankListLayout'
 import ContestListLayout from './ContestListLayout'
 import OrgsListLayout from './OrgsListLayout'
-import Navigation from './Navigation'
 import { HashRouter, Switch, Route, Redirect } from "react-router-dom"
-import { useState } from 'react'
 
 
 export default function AppContainer(){

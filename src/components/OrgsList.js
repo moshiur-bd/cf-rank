@@ -1,7 +1,7 @@
 import { Spinner, Table, Form, Col, InputGroup, FormControl, Button } from 'react-bootstrap'
 import React, { useDebugValue } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './OrgsList.css';
+import './css/OrgsList.css';
 import logo from '../logo.svg';
 import { ParseCFOrgs, ParseCFOrgsCached } from '../lib/CF'
 

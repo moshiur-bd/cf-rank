@@ -1,6 +1,6 @@
 import React from 'react'
-import './RankRow.css'
-import './CFHandles.css'
+import './css/RankRow.css'
+import './css/CFHandles.css'
 
 
 const rankToCSSClassName =(rank) => rank.replace(/\s/g, "");
