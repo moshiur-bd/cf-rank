@@ -58,7 +58,6 @@ export async function ParseCFOrgs() {
 
             var found = [...docAsStr.matchAll(`<option.*value=\"(.*)\".*>(.+?)ENDXXXEND`)]
 
-            debugger
             let resp = []
             let skipFirst = true
             for (const f of found) {

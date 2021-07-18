@@ -27,14 +27,21 @@
     justify-content: center;
     text-align: center;
     font-size: 80%;
+    width: 100%;
 }
 
 .content-div{
     margin: 5% 5%;
+    width: 100%;
 }
 
 .div-checkbox-selector input{
     margin: auto;
     width: calc(.8em + .5rem + 2px);
     height: calc(.8em + .5rem + 2px);
+}
+
+
+.org-table{
+    width: 100%;
 }

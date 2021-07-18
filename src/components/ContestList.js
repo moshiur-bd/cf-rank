@@ -65,12 +65,10 @@ class ContestList extends React.Component{
 
 
     onFilter(e){
-        debugger
         if (this.state.searchStr == undefined) {
             this.state.searchStr = ""
         }
         this.state.data.map((contest) => {
-            debugger
             let rID = this.refID[contest.id]
             if (rID === undefined) {
                 return

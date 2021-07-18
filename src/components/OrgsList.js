@@ -36,12 +36,10 @@ class OrgsList extends React.Component{
 
 
     onFilter(e) {
-        debugger
         if (this.state.searchStr == undefined) {
             this.state.searchStr = ""
         }
         this.state.data.map((org) => {
-            debugger
             let rID = this.refID[org.url]
             if (rID === undefined) {
                 return
@@ -64,7 +62,7 @@ class OrgsList extends React.Component{
         }
 
         return <div className="orgs content-div" key="orgs-div">
-            <Table key='orgs-table' variant="dark" size="sm" responsive="sm" striped="true">
+            <Table className="org-table" key='orgs-table' variant="dark" size="sm" responsive="sm" striped="true">
                 <thead>
                     <tr>
                         <th colSpan="20">
@@ -140,7 +138,6 @@ class OrgsList extends React.Component{
     async parseOrgs(){
         // let orgs = await ParseCFOrgs()
         let data = await ParseCFOrgsCached()
-        // debugger
         this.setState({
             data:data,
             renderCount: this.state.renderCount + 1
