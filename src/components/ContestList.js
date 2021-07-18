@@ -17,13 +17,6 @@ const CF_CONTESTS_URL = (gym) =>  `/contest.list?gym=`+gym
 
 
 
-function RowConatiner({ searchStr, children}){
-    return React.Children.toArray(children).filter( (child) =>{
-        return !searchStr || searchStr == "" || child.props.data.name.toLowerCase().includes(searchStr.toLowerCase())
-    })
-}
-
-
 class ContestList extends React.Component{
     selectRef = []
     refID = {}
@@ -76,10 +69,23 @@ class ContestList extends React.Component{
                                  </div>
                                  <div>
                                      <Button type="submit" className="btn-light" onClick={(e) => {
-                                         if (this.state.searchStr != "") {
-                                             return this.setState({ renderCount: this.state.renderCount + 1 })
-                                         }
-                                     }}>
+                                        if (this.state.searchStr == undefined) {
+                                            this.state.searchStr = ""
+                                        }
+                                        cf.map( (contest) => {
+                                            debugger
+                                            let rID = this.refID[contest.id]
+                                            if(rID === undefined){
+                                                return
+                                            }
+                                            let r = this.selectRef[rID].current
+                                            if (contest.name.toLowerCase().includes(this.state.searchStr.toLowerCase())){
+                                                r.hidden = false
+                                            } else {
+                                                r.hidden = true
+                                            }
+                                        })
+                                        }}>
                                          Filter
                                      </Button>
                                  </div>
@@ -98,7 +104,6 @@ class ContestList extends React.Component{
 
                  </thead>
                  <tbody>
-                     <RowConatiner key={"search-str" + this.state.searchStr} searchStr={this.state.searchStr}>
                          {cf.map((r, i) => {
                              if (r.phase === "BEFORE") {
                                  return
@@ -110,10 +115,9 @@ class ContestList extends React.Component{
                              }
 
 
-                             var elm = <ContestRow ref={this.selectRef[this.refID[r.id]]} key={i} data={r} url={this.props.url} handles={this.props.handles} parsedHandles={this.props.parsedHandles} unofficial={this.props.unofficial} selected={r.id == this.props.contestID} />
+                             var elm = <ContestRow className="hidden-row" ref={this.selectRef[this.refID[r.id]]} key={i} data={r} url={this.props.url} handles={this.props.handles} parsedHandles={this.props.parsedHandles} unofficial={this.props.unofficial} selected={r.id == this.props.contestID} />
                              return elm
                          })}
-                     </RowConatiner>
                  </tbody>
              </Table>
          </div>
@@ -173,8 +177,16 @@ class ContestList extends React.Component{
     shouldComponentUpdate(nextProps, nextState) {
         if(nextProps != null && ( nextProps.url != this.props.url || nextProps.contestID != this.props.contestID)){
             try {
-                this.selectRef[this.refID[Number(nextProps.contestID)]].current.innerHTML = `<input type="checkbox" checked="true">`
-                this.selectRef[this.refID[Number(this.props.contestID)]].current.innerHTML = `<input type="checkbox">`
+                let oldRef = this.selectRef[this.refID[Number(this.props.contestID)]].current
+                let newRef = this.selectRef[this.refID[Number(nextProps.contestID)]].current
+                debugger
+                //oldRef.hidden = true
+
+                // newRef.innerHTML = `<input type="checkbox" checked="true">`
+                
+                oldRef.children[0].children[0].children[0].children[0].checked = false
+                newRef.children[0].children[0].children[0].innerHTML = `<input type="checkbox" checked="true">`
+                //oldRef.innerHTML = `<input type="checkbox">`
             } catch(e){ // may fail due to filter 
 
             }
