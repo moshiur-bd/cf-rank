@@ -66,7 +66,7 @@ export async function ParseCFOrgs() {
                     skipFirst = false
                     continue
                 }
-                resp.push({name:f[2], url:url+"/organization/" + f[1]})
+                resp.push({name:f[2], url:url+"/organization/" + f[1], orgID:f[1]})
             }
             return resp
         })

@@ -8,7 +8,8 @@ import logo from '../logo.svg';
 import { ParseCFOrgs, ParseCFOrgsCached } from '../lib/CF'
 
 import { Link } from 'react-router-dom'
-import { BuildUrl } from "../lib/UrlInfo"
+
+import { GetOrgsUrl } from "../lib/Goto"
 
 
 
@@ -25,14 +26,27 @@ class OrgsList extends React.Component{
 
      constructor(props) {
         super(props);
-         this.state = { data: null, loading: true, needRetry: true, failed: false, searchStr:"", renderCount:0 };
+        this.handleCheckbox = this.handleCheckbox.bind(this);
+        this.state = { data: null, loading: true, urlSet: new Set(props.url.split(";")), failed: false, searchStr:"", renderCount:0 };
+     }
+
+     handleCheckbox(e){
+        let selOrg = e.target.defaultValue
+        if(e.target.checked){
+            this.state.urlSet.add(selOrg)
+        } else {
+            this.state.urlSet.delete(selOrg)
+        }
+        this.state.urlSet.delete("")
+        let compiledUrl = [...this.state.urlSet].join(';')
+        console.log("marked", selOrg, e.target.checked, "url", compiledUrl)
+        this.props.history.push(GetOrgsUrl(this.props.contestID, compiledUrl, this.props.handles, this.props.parsedHandles, this.props.unofficial))
      }
 
      renderOrgs(){
         
-         let orgs = [ "soon will be filled" ]
+         let orgs = [ "soon to be filled" ]
         if(this.state.data !== null && this.state.data !== undefined){
-            debugger
             orgs = this.state.data
         }
 
@@ -51,8 +65,8 @@ class OrgsList extends React.Component{
                 <tbody>
                     {orgs.map(r => <tr>
                         <td >
-                            <div className="div-checkbox-selector one-elm-flex"> <input type="checkbox" /> </div></td>
-                        <td></td ><td colSpan="200">{r.name}</td>
+                            <div className="div-checkbox-selector one-elm-flex"> <input type="checkbox" onChange={this.handleCheckbox.bind(this)} value={r.url} defaultChecked={this.state.urlSet.has(r.url)}/> </div></td>
+                        <td></td><td colSpan="200">{r.name}</td>
                         
                     </tr>)}
                 </tbody>
@@ -109,7 +123,10 @@ class OrgsList extends React.Component{
      }
 
     shouldComponentUpdate(nextProps, nextState) {
-        return true
+        if(nextState){
+            return nextState.renderCount != this.state.renderCount
+        }
+        return false
     }
 }
 
