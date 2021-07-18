@@ -1,0 +1,48 @@
+
+.orgs td{
+    padding-left: 10px;
+    padding-right: 10px;
+    text-align: left;
+}
+
+.orgs th{
+    padding-left: 10px;
+    padding-right: 10px;
+    text-align: left;
+}
+
+.filter-container{
+    display: flex;
+    flex-flow: row wrap;
+    align-items: left;
+    justify-content: left;
+    text-align: center;
+}
+
+.content-list-div{
+    display: flex;
+    flex-flow: col wrap;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 80%;
+    width: 100%;
+}
+
+.content-div{
+    margin: 5% 5%;
+    width: 100%;
+}
+
+.div-checkbox-selector input{
+    width: calc(.8em + .5rem + 2px);
+    height: calc(.8em + .5rem + 2px);
+}
+
+
+.checkbox-org{
+  display: flex;
+  align-items: left;
+  justify-content: left;
+  text-align: left;
+}

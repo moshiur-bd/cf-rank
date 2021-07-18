@@ -98,6 +98,7 @@ export default function Navigation(props){
         <Navbar bg="dark" variant="dark" className='navbar-expand-sm'>
         <Nav className="mr-auto width-hundred">
             <Nav.Link href={BuildUrl("#selector/contests/", contestID, url, handles, props.parsedHandles, unofficial)} active={props.location.pathname.startsWith("/selector/contests")}>Contests</Nav.Link>
+            <Nav.Link href={BuildUrl("#selector/orgs/", contestID, url, handles, props.parsedHandles, unofficial)} active={props.location.pathname.startsWith("/selector/orgs")}>Orgs</Nav.Link>
             <Nav.Link disabled active={props.location.pathname.startsWith("/contest")}>Ranklist</Nav.Link>
 
             <div className="one-elm-flex"><input type="checkbox" onClick={e => setInvisible(e.target.checked)} value={invisible} /></div>

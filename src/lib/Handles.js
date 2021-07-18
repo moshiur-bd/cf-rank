@@ -14,8 +14,6 @@ export class Flag {
     }
 }
 
-
-
 function setDifference(setA, setB) {
     let _difference = new Set(setA)
     for (let elem of setB) {
@@ -31,6 +29,7 @@ function eqSet(as, bs) {
 }
 
 export function StringToHandleSet(handles){
+    if(handles == undefined || handles == null) return new Set();
     return new Set(handles.split(";"))
 }
 

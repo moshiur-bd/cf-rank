@@ -1,3 +1,5 @@
+
+
 const ProxyHost = `https://be-beam.swiftshopbd.com/`
 
 
@@ -33,6 +35,61 @@ export async function ParseCFUsersFromURL(url){
         return ""
     });
 }
+
+export async function ParseCFOrgs() {
+    let url = `https://codeforces.com/ratings`
+    return fetch(ProxyHost + url, {
+        "X-Requested-With": "cf"
+    })
+        .then((response) => {
+            return response.text()
+        }).then(function (html) {
+            let parser = new DOMParser();
+
+            let doc = parser.parseFromString(html, "text/html").querySelector("#locationSelect > label > select")
+
+            // let vals = {}
+            // for (var i = 0, n = sel.options.length; i < n; i++) { // looping over the options
+            //     if (sel.options[i].value) vals.push(sel.options[i].value);
+            // }
+
+            
+            var docAsStr = doc.innerHTML.replaceAll(/(\r\n|\n|\r)/gm, "").replaceAll("</option>","ENDXXXEND\n");
+
+            var found = [...docAsStr.matchAll(`<option.*value=\"(.*)\".*>(.+?)ENDXXXEND`)]
+
+            let resp = []
+            let skipFirst = true
+            for (const f of found) {
+                if(skipFirst){
+                    skipFirst = false
+                    continue
+                }
+                resp.push({name:f[2], url:url+"/organization/" + f[1], orgID:f[1]})
+            }
+            return resp
+        })
+        .catch(function (err) {
+            console.log('Failed to fetch page: ', err);
+            return ""
+        });
+}
+
+export async function ParseCFOrgsCached() {
+    return fetch("orgs.json", {
+        headers:{
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    })
+    .then((response) => {
+        return response.json()
+    })
+}
+
+
+
+
 
 
 export async function FetchRanks(contestID, users, unofficial){

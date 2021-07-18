@@ -14,9 +14,34 @@
 .filter-container{
     display: flex;
     flex-flow: row wrap;
-    /* justify-content: flex-start; */
     align-items: left;
     justify-content: left;
     text-align: center;
+}
+
+.content-list-div{
+    display: flex;
+    flex-flow: col wrap;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 80%;
+}
+
+.content-div{
+    margin: 5% 5%;
+    width: 100%;
+}
+
+.div-checkbox-selector input{
+    width: calc(.8em + .5rem + 2px);
+    height: calc(.8em + .5rem + 2px);
+}
+
+.checkbox-contest{
+  display: flex;
+  align-items: left;
+  justify-content: left;
+  text-align: left;
 }
 

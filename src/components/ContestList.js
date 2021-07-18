@@ -1,10 +1,12 @@
 import { Spinner, Table, Form, Col, InputGroup, FormControl, Button } from 'react-bootstrap'
-import ContestRow from "./ContestRow"
-import Navigation from "./Navigation"
 import React, { useDebugValue } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './ContestList.css';
 import logo from '../logo.svg';
+import { ParseCFOrgs, ParseCFOrgsCached } from '../lib/CF'
+
+import { GetContestUrl } from "../lib/Goto"
+
 
 
 
@@ -13,20 +15,16 @@ const CF_CONTESTS_URL = (gym) =>  `/contest.list?gym=`+gym
 
 
 
-function RowConatiner({ searchStr, children}){
-    return React.Children.toArray(children).filter( (child) =>{
-        return !searchStr || searchStr == "" || child.props.data.name.toLowerCase().includes(searchStr.toLowerCase())
-    })
-}
-
-
 class ContestList extends React.Component{
     selectRef = []
     refID = {}
 
      constructor(props) {
         super(props);
-         this.state = { data: null, loading: true, needRetry: true, failed: false, searchStr:"", renderCount:0 };
+        this.state = { data: null, loading: true, needRetry: true, failed: false, searchStr:"", renderCount:0 };
+         this.onFilter = this.onFilter.bind(this);
+         this.handleCheckbox = this.handleCheckbox.bind(this);
+
      }
 
      async actionFetchContests(gym){
@@ -52,6 +50,103 @@ class ContestList extends React.Component{
          this.state.loading = false
          this.forceUpdate()
      }
+
+    handleCheckbox(e) {
+        let selContest = e.target.value
+        if (!e.target.checked) {
+            e.target.checked = true
+            return
+        }
+        let oldRef = this.selectRef[this.refID[Number(this.props.contestID)]].current
+
+        oldRef.children[0].children[0].children[0].checked = false
+        this.props.history.push(GetContestUrl(selContest, this.props.url, this.props.handles, this.props.parsedHandles, this.props.unofficial))
+    }
+
+
+    onFilter(e){
+        if (this.state.searchStr == undefined) {
+            this.state.searchStr = ""
+        }
+        this.state.data.map((contest) => {
+            let rID = this.refID[contest.id]
+            if (rID === undefined) {
+                return
+            }
+            let r = this.selectRef[rID].current
+            if (contest.name.toLowerCase().includes(this.state.searchStr.toLowerCase())) {
+                r.hidden = false
+            } else {
+                r.hidden = true
+            }
+        })
+        
+    }
+
+    renderRow(row) {
+        if (row == null || row == undefined) {
+            return <tr><td>called with null</td></tr>
+        }
+
+        return (<tr ref={this.selectRef[this.refID[row.id]]} >
+            <td textAlign="left"> <div className="div-checkbox-selector checkbox-contest" > <input type="checkbox" onChange={this.handleCheckbox} defaultValue={row.id} defaultChecked={row.id == this.props.contestID} /> </div></td>
+            <td textAlign="left">{row.name}</td>
+            <td textAlign="left">{row.id}</td>
+            <td textAlign="center"><a href={"https://codeforces.com/contest/" + row.id} target="_blank">link</a></td>
+        </tr>
+        )
+    }
+
+     renderContests(){
+         var cf = this.state.data
+
+
+         return <div className="contests content-div" key="contests-div">
+             <Table key='contests-table' variant="dark" size="sm" responsive="sm" striped="true">
+                 <thead>
+                     <tr>
+                         <th colSpan="20">
+                             <div className="filter-container flex-input-div">
+                                 <div>
+                                     <FormControl
+                                        size="sm"
+                                        placeholder="Filter by Tittle" defaultValue={this.state.searchStr}
+                                        onChange={e => {
+                                        this.state.searchStr = e.target.value
+                                        this.onFilter(e)
+                                        }}></FormControl>
+                                 </div>
+                             </div>
+
+                         </th>
+                     </tr>
+
+                     <tr>
+                         <th></th>
+                         <th>Contest Tittle</th>
+                         <th>ID</th>
+                         <th>Codeforces</th>
+                     </tr>
+
+
+                 </thead>
+                 <tbody>
+                         {cf.map((r, i) => {
+                             if (r.phase === "BEFORE") {
+                                 return
+                             }
+
+                             if (!(r.id in this.refID)) {
+                                 this.selectRef.push(React.createRef())
+                                 this.refID[r.id] = this.selectRef.length - 1
+                             }
+
+                             return this.renderRow(r)
+                         })}
+                 </tbody>
+             </Table>
+         </div>
+     }
      
 
      render(){
@@ -76,69 +171,13 @@ class ContestList extends React.Component{
             }
         }
 
-        var cf = this.state.data
-         return <div key="contests-list-div" >
-            <div className="contests" key="contests-div">
-                <Table key = 'contests-table' variant="dark" size="sm" responsive="sm" striped="true">
-                    <thead>
-                         <tr>
-                             <th colSpan="2">
-                                 <div className="filter-container">
-                                    <div>
-                                        <FormControl 
-                                            className="sm"
-                                            placeholder="Filter by Tittle" defaultValue={this.state.searchStr}
-                                            onChange={e=> this.state.searchStr = e.target.value}   
-                                        ></FormControl>
-                                    </div>
-                                    <div>
-                                        <Button type="submit" className="btn-light" onClick={(e) => {
-                                            if (this.state.searchStr != "") {
-                                                return this.setState({ renderCount: this.state.renderCount + 1 })
-                                            }
-                                        }}>
-                                        Filter
-                                    </Button>
-                                    </div>
-                                 </div>
-
-                            </th>
-                        </tr>
-
-                        <tr>
-                            <th></th>
-                            <th>Contest Tittle</th>
-                            <th>ID</th>
-                            <th>Codeforces</th>
-                        </tr>
-
-
-                    </thead>
-                    <tbody>
-                         <RowConatiner key={"search-str" +this.state.searchStr} searchStr={this.state.searchStr}>
-                             {cf.map((r, i) =>{
-                                if( r.phase === "BEFORE" ){
-                                    return
-                                }
-                                
-                                if (!(r.id in this.refID)){
-                                    this.selectRef.push(React.createRef())
-                                    this.refID[r.id] = this.selectRef.length - 1                                    
-                                }
-                                
-                                
-                                 var elm = <ContestRow ref={this.selectRef[this.refID[r.id]]} key={i} data={r} url={this.props.url} handles={this.props.handles} parsedHandles={this.props.parsedHandles} unofficial={this.props.unofficial} selected={r.id == this.props.contestID}/>
-                                return elm
-                                })}
-                        </RowConatiner>
-                    </tbody>
-                </Table>
-            </div>
+         return <div key="content-list-div" className="content-list-div" >
+            {this.renderContests()}            
         </div>
      }
 
 
-    async repeatedWork() {
+    async fetchContests() {
         this.state.loading = true
         return this.actionFetchContests(false)
         .then(
@@ -149,7 +188,7 @@ class ContestList extends React.Component{
     }
 
     async setRefreshIfNecessary(){
-        await this.repeatedWork()
+        await this.fetchContests()
     }
 
      componentDidMount() {
@@ -161,16 +200,7 @@ class ContestList extends React.Component{
      }
 
     shouldComponentUpdate(nextProps, nextState) {
-        if(nextProps != null && ( nextProps.url != this.props.url || nextProps.contestID != this.props.contestID)){
-            try {
-                this.selectRef[this.refID[Number(nextProps.contestID)]].current.innerText = "SELECTED"
-                this.selectRef[this.refID[Number(this.props.contestID)]].current.innerText = "select"
-            } catch(e){ // may fail due to filter 
-
-            }
-            return false
-        }
-        if(nextState && nextState.searchStr != this.state.searchStr || this.state.renderCount != nextState.renderCount){
+        if(nextState && this.state.renderCount != nextState.renderCount){
             return true
         }
         return false
