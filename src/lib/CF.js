@@ -109,7 +109,7 @@ export async function FetchRanks(contestID, users, unofficial){
     return (await resp.json()).result
 }
 
-export async function FetchUserInfo(users, unofficial) {
+export async function FetchUserInfo(users) {
     var errored = false
     const url = CF_API + CF_USER_INFO(users)
     console.log("Fetching", url)
@@ -163,3 +163,24 @@ export function GetHandleTitle(rating) {
     }
 }
 
+export function AutoDownload(name, data){
+    // Create blob link to download
+    const url = window.URL.createObjectURL(
+        new Blob([data]),
+    );
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute(
+        'download',
+        name,
+    );
+
+    // Append to html link element page
+    document.body.appendChild(link);
+
+    // Start download
+    link.click();
+
+    // Clean up and remove the link
+    link.parentNode.removeChild(link);
+}
