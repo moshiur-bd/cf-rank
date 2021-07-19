@@ -3,7 +3,7 @@ import React, { useDebugValue } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/OrgsList.css';
 import logo from '../logo.svg';
-import { ParseCFOrgs, ParseCFOrgsCached } from '../lib/CF'
+import { ParseCFOrgs, ParseCFOrgsCached, CF_ORG_URL } from '../lib/CF'
 
 import { Link } from 'react-router-dom'
 
@@ -22,7 +22,7 @@ class OrgsList extends React.Component{
      }
 
      handleCheckbox(e){
-        let selOrg = e.target.defaultValue
+        let selOrg = CF_ORG_URL(e.target.defaultValue)
         if(e.target.checked){
             this.state.urlSet.add(selOrg)
         } else {
@@ -40,7 +40,9 @@ class OrgsList extends React.Component{
             this.state.searchStr = ""
         }
         this.state.data.map((org) => {
-            let rID = this.refID[org.url]
+            debugger
+
+            let rID = this.refID[org.orgID]
             if (rID === undefined) {
                 return
             }
@@ -89,13 +91,13 @@ class OrgsList extends React.Component{
                 </thead>
                 <tbody>
                     {orgs.map(r =>{ 
-                    if (!(r.url in this.refID)) {
+                    if (!(r.orgID in this.refID)) {
                         this.selectRef.push(React.createRef())
-                        this.refID[r.url] = this.selectRef.length - 1
+                        this.refID[r.orgID] = this.selectRef.length - 1
                     }
-                    return <tr ref={this.selectRef[this.refID[r.url]]}>
+                    return <tr ref={this.selectRef[this.refID[r.orgID]]}>
                         <td >
-                            <div className="div-checkbox-selector checkbox-org"> <input type="checkbox" onChange={this.handleCheckbox} value={r.url} defaultChecked={this.state.urlSet.has(r.url)}/> </div></td>
+                            <div className="div-checkbox-selector checkbox-org"> <input type="checkbox" onChange={this.handleCheckbox} value={r.orgID} defaultChecked={this.state.urlSet.has(CF_ORG_URL(r.orgID))}/> </div></td>
                         <td></td><td colSpan="200">{r.name}</td>
                     </tr>})}
                 </tbody>
