@@ -1,4 +1,6 @@
 
+import {UniqueParsedHandles} from './Handles'
+
 
 const ProxyHost = `https://be-beam.swiftshopbd.com/`
 
@@ -9,6 +11,8 @@ const CF_STANDING_URL = (id, unofficial, users) => `/contest.standings?showUnoff
 const CF_USER_INFO = (users) => `/user.info?handles=` + users
 export const CF_ORG_URL = (orgID) => CF_FE + `/ratings/organization/` + orgID
 const CONTEST_FINISHED = "FINISHED"
+
+const MAX_ASYNC_HANDLE_PARSER_PER_URL = 2
 
 
 export async function ParseCFUsersFromURL(url){
@@ -36,6 +40,37 @@ export async function ParseCFUsersFromURL(url){
         console.log('Failed to fetch page: ', err);
         return ""
     });
+}
+
+export async function ParseHandlesFromSingleURLAndPages(url) {
+    let handles = ""
+    let pageID = 1
+
+    while (true) {
+        let promises = []
+        for (let i = 1; i <= MAX_ASYNC_HANDLE_PARSER_PER_URL; i++) {
+            promises.push(ParseCFUsersFromURL(url + "/page/" + pageID))
+            pageID++
+        }
+
+        let pHandles = await Promise.all(promises)
+
+        for (let i = 0; i < pHandles.length; i++) {
+            var { unq, cnt, tot } = UniqueParsedHandles(pHandles[i], handles)
+            if (cnt > 0) {
+                handles += unq
+            } else {
+                break
+            }
+        }
+
+        if (cnt <= 0 || pageID > 20) {
+            break
+        }
+    }
+
+    console.table({ log: "Parse handle result per url", url: url, total: tot, handles: handles })
+    return handles
 }
 
 export async function ParseCFOrgs() {
@@ -92,11 +127,6 @@ export async function ParseCFOrgsCached() {
         return response.json()
     })
 }
-
-
-
-
-
 
 export async function FetchRanks(contestID, users, unofficial){
     var errored = false

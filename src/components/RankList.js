@@ -2,7 +2,7 @@ import { Spinner, Table, Form, Col, InputGroup, FormControl, Button, ProgressBar
 import RankRow from "./RankRow"
 import Navigation from "./Navigation"
 import React from 'react'
-import { ParseCFUsersFromURL, FetchRanks, GetContestStatusText, FetchUserInfo} from "../lib/CF"
+import { ParseHandlesFromSingleURLAndPages, FetchRanks, GetContestStatusText, FetchUserInfo} from "../lib/CF"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/RankList.css';
 import logo from '../logo.svg';
@@ -11,9 +11,6 @@ import { IsSameHandles, UniqueParsedHandles, StringToHandleSet } from "../lib/Ha
 
 
 const CONTEST_FINISHED = "FINISHED"
-const MAX_ASYNC_HANDLE_PARSER_PER_URL = 2
-
-
 
 class RankList extends React.Component{
     _isMounted = false
@@ -109,44 +106,13 @@ class RankList extends React.Component{
         }
     }
 
-    async parseHandlesFromSingleURLAndPages(url) {
-        let handles = ""
-        let pageID = 1
-
-        while(true){
-            let promises = []
-            for (let i = 1; i <= MAX_ASYNC_HANDLE_PARSER_PER_URL; i++) {
-                promises.push(ParseCFUsersFromURL(url + "/page/" + pageID))
-                pageID++
-            }
-
-            let pHandles = await Promise.all(promises)
-
-            for (let i = 0; i < pHandles.length; i++) {
-                var { unq, cnt, tot } = UniqueParsedHandles(pHandles[i], handles)
-                if (cnt > 0) {
-                    handles += unq
-                } else {
-                    break
-                }
-            }
-            
-            if(cnt <= 0 || pageID > 20) {
-                break
-            }
-        }
-        
-        console.table({ log: "Parse handle result per url", url: url, total: tot, handles:handles })
-        return handles
-    }
-
     async parseHandlesFromAllUrls(url){
         let handles = ""
         let urls = url.split(";")
         let promises = []
         for(let i = 0; i < urls.length; i++){
             if(urls[i] === "") return
-            promises.push(this.parseHandlesFromSingleURLAndPages(urls[i]))
+            promises.push(ParseHandlesFromSingleURLAndPages(urls[i]))
         }
 
         let pHandles = await Promise.all(promises)
