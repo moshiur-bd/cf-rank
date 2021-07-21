@@ -10,6 +10,8 @@ const CF_FE = "https://codeforces.com"
 const CF_STANDING_URL = (id, unofficial, users) => `/contest.standings?showUnofficial=` + unofficial + `&contestId=` + id + `&handles=` + users
 const CF_USER_INFO = (users) => `/user.info?handles=` + users
 export const CF_ORG_URL = (orgID) => CF_FE + `/ratings/organization/` + orgID
+export const CF_ORG_URL_TO_ID = (url) => url.substr(url.lastIndexOf('/') + 1)
+
 const CONTEST_FINISHED = "FINISHED"
 
 const MAX_ASYNC_HANDLE_PARSER_PER_URL = 2
@@ -126,6 +128,18 @@ export async function ParseCFOrgsCached() {
     .then((response) => {
         return response.json()
     })
+}
+
+export async function ParseCFHandlesCached() {
+    return fetch("/assets/handles.json", {
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    })
+        .then((response) => {
+            return response.json()
+        })
 }
 
 export async function FetchRanks(contestID, users, unofficial){

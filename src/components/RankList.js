@@ -2,7 +2,7 @@ import { Spinner, Table, Form, Col, InputGroup, FormControl, Button, ProgressBar
 import RankRow from "./RankRow"
 import Navigation from "./Navigation"
 import React from 'react'
-import { ParseHandlesFromSingleURLAndPages, FetchRanks, GetContestStatusText, FetchUserInfo} from "../lib/CF"
+import { ParseHandlesFromSingleURLAndPages, FetchRanks, GetContestStatusText, FetchUserInfo, ParseCFHandlesCached, CF_ORG_URL_TO_ID} from "../lib/CF"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/RankList.css';
 import logo from '../logo.svg';
@@ -18,8 +18,8 @@ class RankList extends React.Component{
     constructor(props) {
         super(props);
         let h = props.handles;
-        if(props.url !== ""){
-            h = h + props.parsedHandles
+        if(props.parseHandles !== ""){
+            h = h + props.parseHandles
         }
         this.state = { data: null, loading:true, needRetry:true, failed:false, handles: h, renderCount: 0, userInfo:{}, handlesSet: StringToHandleSet(h)};
     }
@@ -60,17 +60,17 @@ class RankList extends React.Component{
             resp.rows.map(r => {
                 let take = false
                 r.party.members.map(m => {
-                    debugger
                     if(this.state.handlesSet.has(m.handle)){
                         take = true
                     }
                 })
-                debugger
+                
                 if(take){
                     this.state.data.rows.push(r)
                 }
                 
             })
+            debugger
 
             if (this.state.data.contest.phase == CONTEST_FINISHED) {
                 this.state.needRetry = false
@@ -106,59 +106,73 @@ class RankList extends React.Component{
         }
     }
 
-    async parseHandlesFromAllUrls(url){
-        let handles = ""
+    // async parseHandlesFromAllUrls(url){
+    //     let handles = ""
+    //     let urls = url.split(";")
+    //     let promises = []
+    //     for(let i = 0; i < urls.length; i++){
+    //         if(urls[i] === "") return
+    //         promises.push(ParseHandlesFromSingleURLAndPages(urls[i]))
+    //     }
+
+    //     let pHandles = await Promise.all(promises)
+
+    //     for(let i = 0; i < pHandles.length; i++){
+    //         var { unq, cnt, tot } = UniqueParsedHandles(pHandles[i], handles)
+    //         if(cnt > 0){
+    //             handles += unq
+    //         }
+    //     }
+    //     console.table({ log: "Total handles parsed", total: tot, handles:handles})
+    //     return handles
+    // }
+
+    // async parseHandles() {
+    //     if(this.props.url === undefined || this.props.url === ""){
+    //         return
+    //     }
+    //     this.state.loading = true
+    //     let handles = await this.parseHandlesFromAllUrls(this.props.url)
+
+    //     var { unq, cnt, tot } = UniqueParsedHandles(handles, this.props.handles)
+
+    //     console.table({ log: "Total handles parsed - custom handles", total: tot, totalHandles: handles, uniqueHandles: unq, uniqueCount: cnt })
+
+
+    //     let isSame = IsSameHandles(unq, this.props.parsedHandles)
+    //     if (isSame){
+    //         return
+    //     }
+
+        
+
+    //     // if (this._isMounted) {
+    //     //     this.props.history.push(GetRanklistUrl(this.props.contestID, this.props.url, this.props.handles, unq, this.props.unofficial))
+    //     // }
+    // }
+
+    async parseHandlesFromAllUrlsAndSet(url) {
         let urls = url.split(";")
-        let promises = []
-        for(let i = 0; i < urls.length; i++){
-            if(urls[i] === "") return
-            promises.push(ParseHandlesFromSingleURLAndPages(urls[i]))
+        let handlesJson = await ParseCFHandlesCached()
+        for (let i = 0; i < urls.length; i++) {
+            if (urls[i] === "") return
+            let key = "o:" + CF_ORG_URL_TO_ID(urls[i])
+            let handles = handlesJson[key]
+            debugger
+            handles.split(";").map(h => this.state.handlesSet.add(h))
         }
 
-        let pHandles = await Promise.all(promises)
-
-        for(let i = 0; i < pHandles.length; i++){
-            var { unq, cnt, tot } = UniqueParsedHandles(pHandles[i], handles)
-            if(cnt > 0){
-                handles += unq
-            }
-        }
-        console.table({ log: "Total handles parsed", total: tot, handles:handles})
-        return handles
-    }
-
-    async parseHandles() {
-        if(this.props.url === undefined || this.props.url === ""){
-            return
-        }
-        this.state.loading = true
-        let handles = await this.parseHandlesFromAllUrls(this.props.url)
-
-        var { unq, cnt, tot } = UniqueParsedHandles(handles, this.props.handles)
-
-        console.table({ log: "Total handles parsed - custom handles", total: tot, totalHandles: handles, uniqueHandles: unq, uniqueCount: cnt })
-
-
-        let isSame = IsSameHandles(unq, this.props.parsedHandles)
-        if (isSame){
-            return
-        }
-
-
-        if (this._isMounted) {
-            this.props.history.push(GetRanklistUrl(this.props.contestID, this.props.url, this.props.handles, unq, this.props.unofficial))
-        }
+        console.table({ log: "Total handles", count: this.state.handlesSet.size})
     }
 
     async setRefreshIfNecessary(){
-        if(this.state.handles !== "") {
-            //this.actionFetchRanks(this.state.handles)
-            this.actionFetchRanksAndFilterByUsers()
-            this.actionFetchUserInfo(this.state.handles)
-        }
-        await this.parseHandles()
+        await this.parseHandlesFromAllUrlsAndSet(this.props.url)
+        this.actionFetchRanksAndFilterByUsers()
+        this.actionFetchUserInfo(this.state.handles)
+
+        debugger
         if (this.state.needRetry) {
-            this.parseRankInterval = setInterval(() => { this.actionFetchRanks(this.state.handles) }, 30000);
+            this.parseRankInterval = setInterval(() => { this.actionFetchRanksAndFilterByUsers() }, 30000);
         }
     }
     componentWillUnmount() {
