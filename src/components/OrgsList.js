@@ -42,7 +42,7 @@ class OrgsList extends React.Component{
         this.state.data.map((org) => {
             debugger
 
-            let rID = this.refID[org.orgID]
+            let rID = this.refID[org.id]
             if (rID === undefined) {
                 return
             }
@@ -86,19 +86,23 @@ class OrgsList extends React.Component{
                         <th></th>
                         <th></th>
                         <th>Org Name</th>
-                        <th></th>
+                        <th>Handle Count</th>
+                        <th>CF</th>
                     </tr>
                 </thead>
                 <tbody>
                     {orgs.map(r =>{ 
-                    if (!(r.orgID in this.refID)) {
+                    if (!(r.id in this.refID)) {
                         this.selectRef.push(React.createRef())
-                        this.refID[r.orgID] = this.selectRef.length - 1
+                        this.refID[r.id] = this.selectRef.length - 1
                     }
-                    return <tr ref={this.selectRef[this.refID[r.orgID]]}>
+                    return <tr ref={this.selectRef[this.refID[r.id]]}>
                         <td >
-                            <div className="div-checkbox-selector checkbox-org"> <input type="checkbox" onChange={this.handleCheckbox} value={r.orgID} defaultChecked={this.state.urlSet.has(CF_ORG_URL(r.orgID))}/> </div></td>
-                        <td></td><td colSpan="200">{r.name}</td>
+                            <div className="div-checkbox-selector checkbox-org"> <input type="checkbox" onChange={this.handleCheckbox} value={r.id} defaultChecked={this.state.urlSet.has(CF_ORG_URL(r.id))}/> </div></td>
+                        <td></td>
+                        <td >{r.name}</td>
+                        <td >{r.hc}</td>
+                        <td ><a href={CF_ORG_URL(r.id)}>link</a></td>
                     </tr>})}
                 </tbody>
             </Table>

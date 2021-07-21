@@ -67,7 +67,11 @@ export async function ParseCFOrgs() {
                     skipFirst = false
                     continue
                 }
-                resp.push({name:f[2], orgID:f[1]})
+                let nameEndsAt = f[2].lastIndexOf(',');
+                let handleCount = parseInt(f[2].substr(nameEndsAt + 1))
+                handleCount = isNaN(handleCount)? 0: handleCount
+
+                resp.push({name:f[2].substr(0, nameEndsAt), id:f[1], hc:handleCount})
             }
             return resp
         })
@@ -78,7 +82,7 @@ export async function ParseCFOrgs() {
 }
 
 export async function ParseCFOrgsCached() {
-    return fetch("orgs.json", {
+    return fetch("/assets/orgs.json", {
         headers:{
             'Content-Type': 'application/json',
             'Accept': 'application/json'
