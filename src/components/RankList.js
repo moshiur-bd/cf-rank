@@ -7,10 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/RankList.css';
 import logo from '../logo.svg';
 import { GetRanklistUrl} from "../lib/Goto"
-import { IsSameHandles, UniqueParsedHandles } from "../lib/Handles"
-
-
-
+import { IsSameHandles, UniqueParsedHandles, StringToHandleSet } from "../lib/Handles"
 
 
 const CONTEST_FINISHED = "FINISHED"
@@ -27,7 +24,7 @@ class RankList extends React.Component{
         if(props.url !== ""){
             h = h + props.parsedHandles
         }
-        this.state = { data: null, loading:true, needRetry:true, failed:false, handles: h, renderCount: 0, userInfo:{} };
+        this.state = { data: null, loading:true, needRetry:true, failed:false, handles: h, renderCount: 0, userInfo:{}, handlesSet: StringToHandleSet(h)};
     }
 
     async actionFetchRanks(users){
@@ -49,6 +46,48 @@ class RankList extends React.Component{
         if(this._isMounted){
             this.setState({
                 renderCount:this.state.renderCount + 1
+            })
+        }
+    }
+
+    async actionFetchRanksAndFilterByUsers() {
+
+        let resp = await FetchRanks(this.props.contestID, "", this.props.unofficial)
+
+
+        if (resp !== undefined) {
+            this.state.data = {}
+            this.state.data.contest = resp.contest
+            this.state.data.problems = resp.problems
+            this.state.data.rows = []
+            resp.rows.map(r => {
+                let take = false
+                r.party.members.map(m => {
+                    debugger
+                    if(this.state.handlesSet.has(m.handle)){
+                        take = true
+                    }
+                })
+                debugger
+                if(take){
+                    this.state.data.rows.push(r)
+                }
+                
+            })
+
+            if (this.state.data.contest.phase == CONTEST_FINISHED) {
+                this.state.needRetry = false
+            } else {
+                this.state.needRetry = true
+            }
+        } else {
+            this.state.needRetry = false
+        }
+
+        this.state.loading = false
+        if (this._isMounted) {
+            this.setState({
+                renderCount: this.state.renderCount + 1
             })
         }
     }
@@ -147,7 +186,8 @@ class RankList extends React.Component{
 
     async setRefreshIfNecessary(){
         if(this.state.handles !== "") {
-            this.actionFetchRanks(this.state.handles)
+            //this.actionFetchRanks(this.state.handles)
+            this.actionFetchRanksAndFilterByUsers()
             this.actionFetchUserInfo(this.state.handles)
         }
         await this.parseHandles()

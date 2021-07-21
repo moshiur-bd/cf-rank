@@ -30,7 +30,9 @@ function eqSet(as, bs) {
 
 export function StringToHandleSet(handles){
     if(handles == undefined || handles == null) return new Set();
-    return new Set(handles.split(";"))
+    let hs = new Set(handles.split(";"))
+    hs.delete("")
+    return hs
 }
 
 export function HandleSetToString(handles) {

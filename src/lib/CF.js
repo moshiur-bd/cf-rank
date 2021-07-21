@@ -7,7 +7,7 @@ const CF_API = "https://codeforces.com/api"
 const CF_FE = "https://codeforces.com"
 const CF_STANDING_URL = (id, unofficial, users) => `/contest.standings?showUnofficial=` + unofficial + `&contestId=` + id + `&handles=` + users
 const CF_USER_INFO = (users) => `/user.info?handles=` + users
-export const CF_ORG_URL = (orgID) => CF_FE + `/ratings/organizations/` + orgID
+export const CF_ORG_URL = (orgID) => CF_FE + `/ratings/organization/` + orgID
 const CONTEST_FINISHED = "FINISHED"
 
 
