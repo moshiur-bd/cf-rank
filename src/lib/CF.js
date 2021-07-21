@@ -2,7 +2,7 @@
 import {UniqueParsedHandles} from './Handles'
 
 
-const ProxyHost = `https://be-beam.swiftshopbd.com/`
+const ProxyHost = `http://localhost:8080/`
 
 
 const CF_API = "https://codeforces.com/api"
@@ -14,7 +14,7 @@ export const CF_ORG_URL_TO_ID = (url) => url.substr(url.lastIndexOf('/') + 1)
 
 const CONTEST_FINISHED = "FINISHED"
 
-const MAX_ASYNC_HANDLE_PARSER_PER_URL = 2
+const MAX_ASYNC_HANDLE_PARSER_PER_URL = 20
 
 
 export async function ParseCFUsersFromURL(url){
@@ -44,15 +44,18 @@ export async function ParseCFUsersFromURL(url){
     });
 }
 
-export async function ParseHandlesFromSingleURLAndPages(url) {
+export async function ParseHandlesFromSingleURLAndPages(url, handleCount) {
     let handles = ""
     let pageID = 1
 
+
     while (true) {
         let promises = []
-        for (let i = 1; i <= MAX_ASYNC_HANDLE_PARSER_PER_URL; i++) {
+        handleCount += 100 // let's add some more handles to be sure we have all of them
+        for (let i = 1; handleCount > 0 && i <= MAX_ASYNC_HANDLE_PARSER_PER_URL; i++) {
             promises.push(ParseCFUsersFromURL(url + "/page/" + pageID))
             pageID++
+            handleCount -= 200
         }
 
         let pHandles = await Promise.all(promises)
@@ -66,7 +69,7 @@ export async function ParseHandlesFromSingleURLAndPages(url) {
             }
         }
 
-        if (cnt <= 0 || pageID > 20) {
+        if (cnt <= 0) {
             break
         }
     }
