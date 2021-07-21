@@ -17,46 +17,20 @@ class RankList extends React.Component{
 
     constructor(props) {
         super(props);
-        let h = props.handles;
-        if(props.parseHandles !== ""){
-            h = h + props.parseHandles
-        }
-        this.state = { data: null, loading:true, needRetry:true, failed:false, handles: h, renderCount: 0, userInfo:{}, handlesSet: StringToHandleSet(h)};
-    }
-
-    async actionFetchRanks(users){
-
-        let resp = await FetchRanks(this.props.contestID, users, this.props.unofficial)
-
-        if (resp !== undefined) {
-            this.state.data = resp
-            if (this.state.data.contest.phase == CONTEST_FINISHED) {
-                this.state.needRetry = false
-            } else {
-                this.state.needRetry = true
-            }
-        } else {
-            this.state.needRetry = false
-        }
-    
-        this.state.loading = false
-        if(this._isMounted){
-            this.setState({
-                renderCount:this.state.renderCount + 1
-            })
-        }
+        this.state = { data: null, loading: true, needRetry: true, failed: false, renderCount: 0, userInfo: {}, handlesSet: StringToHandleSet(props.handles), handlesSetInRank: new Set(), handlesSetRankQ: new Set()};
     }
 
     async actionFetchRanksAndFilterByUsers() {
 
         let resp = await FetchRanks(this.props.contestID, "", this.props.unofficial)
 
-
         if (resp !== undefined) {
             this.state.data = {}
             this.state.data.contest = resp.contest
             this.state.data.problems = resp.problems
             this.state.data.rows = []
+            
+            let q = new Set()
             resp.rows.map(r => {
                 let take = false
                 r.party.members.map(m => {
@@ -67,10 +41,16 @@ class RankList extends React.Component{
                 
                 if(take){
                     this.state.data.rows.push(r)
+                    r.party.members.map(m => {
+                        if(this.state.handlesSetInRank.has(m.handle) == false) {
+                            this.state.handlesSetInRank.add(m.handle)
+                            q.add(m.handle)
+                        }
+                    })
                 }
                 
             })
-            debugger
+            q.forEach(h => {this.state.handlesSetRankQ.add(h)})
 
             if (this.state.data.contest.phase == CONTEST_FINISHED) {
                 this.state.needRetry = false
@@ -89,67 +69,40 @@ class RankList extends React.Component{
         }
     }
 
-    async actionFetchUserInfo(users) {
-        let resp = await FetchUserInfo(users)
-        if (resp !== undefined) {
-            let mp = {}
-            resp.map(r => mp[r.handle] = r)
-            this.state.userInfo = mp
-        } else {
-            console.log("user-info not found. unable to set colors")
-        }
+    async actionFetchUserInfo() {
+        let hs = [...this.state.handlesSetRankQ]
 
+        let handles = "", hc = 0
+        let promises = []
+
+        hs.map(h => {
+            handles += (h + ";")
+            hc++
+            if (hc % 200 == 0) {
+                promises.push(FetchUserInfo(handles))
+                handles = ""
+            }
+        })
+        if(handles != "")
+        {
+            promises.push(FetchUserInfo(handles))
+            handles = ""
+        }
+        let mp = this.state.userInfo
+        let resps = await Promise.all(promises)
+        
+        resps.map(resp => {
+            resp.map(r => mp[r.handle] = r)
+        })
+        hs.map(h=>{this.state.handlesSetRankQ.delete(h)})
+        this.state.userInfo = mp
+        debugger
         if (this._isMounted) {
             this.setState({
                 renderCount: this.state.renderCount + 1
             })
         }
     }
-
-    // async parseHandlesFromAllUrls(url){
-    //     let handles = ""
-    //     let urls = url.split(";")
-    //     let promises = []
-    //     for(let i = 0; i < urls.length; i++){
-    //         if(urls[i] === "") return
-    //         promises.push(ParseHandlesFromSingleURLAndPages(urls[i]))
-    //     }
-
-    //     let pHandles = await Promise.all(promises)
-
-    //     for(let i = 0; i < pHandles.length; i++){
-    //         var { unq, cnt, tot } = UniqueParsedHandles(pHandles[i], handles)
-    //         if(cnt > 0){
-    //             handles += unq
-    //         }
-    //     }
-    //     console.table({ log: "Total handles parsed", total: tot, handles:handles})
-    //     return handles
-    // }
-
-    // async parseHandles() {
-    //     if(this.props.url === undefined || this.props.url === ""){
-    //         return
-    //     }
-    //     this.state.loading = true
-    //     let handles = await this.parseHandlesFromAllUrls(this.props.url)
-
-    //     var { unq, cnt, tot } = UniqueParsedHandles(handles, this.props.handles)
-
-    //     console.table({ log: "Total handles parsed - custom handles", total: tot, totalHandles: handles, uniqueHandles: unq, uniqueCount: cnt })
-
-
-    //     let isSame = IsSameHandles(unq, this.props.parsedHandles)
-    //     if (isSame){
-    //         return
-    //     }
-
-        
-
-    //     // if (this._isMounted) {
-    //     //     this.props.history.push(GetRanklistUrl(this.props.contestID, this.props.url, this.props.handles, unq, this.props.unofficial))
-    //     // }
-    // }
 
     async parseHandlesFromAllUrlsAndSet(url) {
         let urls = url.split(";")
@@ -167,12 +120,16 @@ class RankList extends React.Component{
 
     async setRefreshIfNecessary(){
         await this.parseHandlesFromAllUrlsAndSet(this.props.url)
-        this.actionFetchRanksAndFilterByUsers()
-        this.actionFetchUserInfo(this.state.handles)
+        await this.actionFetchRanksAndFilterByUsers()
+        await this.actionFetchUserInfo()
 
         debugger
         if (this.state.needRetry) {
-            this.parseRankInterval = setInterval(() => { this.actionFetchRanksAndFilterByUsers() }, 30000);
+            this.parseRankInterval = setInterval(() => { 
+                this.actionFetchRanksAndFilterByUsers().then(
+                () => this.actionFetchUserInfo()
+                )
+            }, 30000);
         }
     }
     componentWillUnmount() {
