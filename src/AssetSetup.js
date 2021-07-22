@@ -63,14 +63,14 @@ export default class AssetSetup extends Component {
         for (let org of orgs) {
             const work = async () => {
                 let handles = await ParseHandlesFromSingleURLAndPages(CF_ORG_URL(org.id), org.hc)
-                handlesMap["o:" + org.id] = handles
+                AutoDownload(org.id + ".org.txt", JSON.stringify({handles:handles}))
             }
 
             promises.push(work())
             stepCount++
             if (stepCount % 50 === 0) {
                 await Promise.all(promises)
-                this.setState({ completed: 50 + stepCount, total: 50 + orgs.length})
+                this.setState({ completed: 1 + stepCount, total: 1 + orgs.length})
                 promises = []
             }
         }
