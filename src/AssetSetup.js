@@ -3,7 +3,9 @@ import {Component} from 'react'
 import { Spinner, Table, Form, Col, InputGroup, FormControl, Button, ProgressBar } from 'react-bootstrap'
 import { StringToHandleSet } from './lib/Handles'
 
-
+async function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 export async function ParseFileLS() {
     return fetch("/assets/ls.txt", {
@@ -15,6 +17,25 @@ export async function ParseFileLS() {
         .then((response) => {
             return response.text()
         })
+}
+
+class RateLimit {
+    constructor(counter) {
+        this.counter = counter; // how many users can use the resource at one, set 1 for regular lock
+    }
+    async exec(cb) {
+        while (true) {
+            if (this.counter > 0) { // there is no one wating for the resource
+                this.counter--; // update the resource is in usage
+                return await cb();  // fire the requested callback
+            }
+            await sleep(200)
+        }
+    }
+
+    done() {
+        this.counter++;
+    }
 }
 
 export default class AssetSetup extends Component {
@@ -49,6 +70,7 @@ export default class AssetSetup extends Component {
         super()
         this.state={completed:0, total:10}
         this.ls = new Set()
+        this.rateLimit = new RateLimit(50)
     }
 
     componentDidMount(){
@@ -89,18 +111,25 @@ export default class AssetSetup extends Component {
                     console.table({log:"Couldn't parse org", orgID:org.id, orgName:org.name, handles:handles, parsedHandleCount:phc, expectedHandleCount:org.hc})
                 }
             }
+            if(org.hc < 10){
+                stepCount++
+                continue
+            }
 
             if (!this.ls.has(fileName)) {
-                promises.push(work())
+                this.rateLimit.exec(()=> work().then(()=>{ 
+                    this.rateLimit.done()
+                    stepCount++
+                    if (stepCount % 10 === 0) {
+                        this.setState({ completed: 1 + stepCount, total: 1 + orgs.length })
+                    }
+                }))
+            } else {
+                stepCount++
             }
             
             
-            stepCount++
-            if (stepCount % 50 === 0) {
-                await Promise.all(promises)
-                this.setState({ completed: 1 + stepCount, total: 1 + orgs.length})
-                promises = []
-            }
+
         }
     }
 }
