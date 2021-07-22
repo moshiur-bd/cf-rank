@@ -89,12 +89,6 @@ export async function ParseCFOrgs() {
             let parser = new DOMParser();
 
             let doc = parser.parseFromString(html, "text/html").querySelector("#locationSelect > label > select")
-
-            // let vals = {}
-            // for (var i = 0, n = sel.options.length; i < n; i++) { // looping over the options
-            //     if (sel.options[i].value) vals.push(sel.options[i].value);
-            // }
-
             
             var docAsStr = doc.innerHTML.replaceAll(/(\r\n|\n|\r)/gm, "").replaceAll("</option>","ENDXXXEND\n");
 
@@ -145,16 +139,69 @@ export async function ParseCFHandlesCached() {
         })
 }
 
+// rate limit to 4 calls every second
+class Lock {
+    constructor(counter) {
+        this.counter = counter; // how many users can use the resource at one, set 1 for regular lock
+    }
+
+    now() {
+        return Math.round(+new Date() / 1000)
+    }
+    async hold(cb) {
+        while (true) {
+            if (this.counter > 0) { // there is no one wating for the resource
+                this.counter--; // update the resource is in usage
+                return await cb();  // fire the requested callback
+            }
+            await sleep(200)
+        }
+    }
+
+    release() {
+        this.counter++;
+    }
+}
+
+async function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+const RATE_LIMIT = 5
+const MAX_RETRY = 50
+let lock = new Lock(RATE_LIMIT)
+
+
+
+async function RateLimitFetch(url){
+    let retryCount = MAX_RETRY
+    let resp
+    while(retryCount > 0){
+        resp = await lock.hold(async () => {
+            let r = await fetch(url)
+            lock.release()
+            return r
+        })
+
+        if (resp.status == 200) {
+            return resp
+        }
+        retryCount--
+    }
+    return resp
+}
+    
+
 export async function FetchRanks(contestID, users, unofficial){
     var errored = false
     const url = CF_API + CF_STANDING_URL(contestID, unofficial, users)
     console.log("Fetching", url)
-    const resp = await fetch(url).
+    const resp = await RateLimitFetch(url).
         catch(err => {
             console.log(err);
             errored = true
             return
-        });
+        })
 
     if (errored || resp.status !== 200) {
         return undefined
@@ -166,7 +213,7 @@ export async function FetchUserInfo(users) {
     var errored = false
     const url = CF_API + CF_USER_INFO(users)
     console.log("Fetching", url)
-    const resp = await fetch(url).
+    const resp = await RateLimitFetch(url).
         catch(err => {
             console.log(err);
             errored = true

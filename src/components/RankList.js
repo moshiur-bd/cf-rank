@@ -91,12 +91,12 @@ class RankList extends React.Component{
         let mp = this.state.userInfo
         let resps = await Promise.all(promises)
         
+        debugger
         resps.map(resp => {
             resp.map(r => mp[r.handle] = r)
         })
         hs.map(h=>{this.state.handlesSetRankQ.delete(h)})
         this.state.userInfo = mp
-        debugger
         if (this._isMounted) {
             this.setState({
                 renderCount: this.state.renderCount + 1
@@ -111,7 +111,6 @@ class RankList extends React.Component{
             if (urls[i] === "") return
             let key = "o:" + CF_ORG_URL_TO_ID(urls[i])
             let handles = handlesJson[key]
-            debugger
             handles.split(";").map(h => this.state.handlesSet.add(h))
         }
 
@@ -123,7 +122,6 @@ class RankList extends React.Component{
         await this.actionFetchRanksAndFilterByUsers()
         await this.actionFetchUserInfo()
 
-        debugger
         if (this.state.needRetry) {
             this.parseRankInterval = setInterval(() => { 
                 this.actionFetchRanksAndFilterByUsers().then(
