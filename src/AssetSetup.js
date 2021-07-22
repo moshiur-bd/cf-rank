@@ -100,6 +100,7 @@ export default class AssetSetup extends Component {
     async scrapeAllHandles(orgs) {
         let stepCount = 0
         let promises = []
+        this.setState({total: orgs.length})
         for (let org of orgs) {
             let fileName = "id.org." + org.id + ".json"
             const work = async () => {
@@ -111,17 +112,13 @@ export default class AssetSetup extends Component {
                     console.table({log:"Couldn't parse org", orgID:org.id, orgName:org.name, handles:handles, parsedHandleCount:phc, expectedHandleCount:org.hc})
                 }
             }
-            if(org.hc < 10){
-                stepCount++
-                continue
-            }
 
             if (!this.ls.has(fileName)) {
                 this.rateLimit.exec(()=> work().then(()=>{ 
                     this.rateLimit.done()
                     stepCount++
                     if (stepCount % 10 === 0) {
-                        this.setState({ completed: 1 + stepCount, total: 1 + orgs.length })
+                        this.setState({ completed: stepCount, total: orgs.length })
                     }
                 }))
             } else {
