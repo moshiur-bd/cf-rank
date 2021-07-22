@@ -130,8 +130,9 @@ export async function ParseCFOrgsCached() {
     })
 }
 
-export async function ParseCFHandlesCached() {
-    return fetch("/assets/handles.json", {
+export async function ParseCFHandlesCached(url) {
+    let orgID = CF_ORG_URL_TO_ID(url)
+    return fetch("/assets/handles/id.org." + orgID + ".json", {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'

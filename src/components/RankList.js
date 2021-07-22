@@ -106,11 +106,10 @@ class RankList extends React.Component{
 
     async parseHandlesFromAllUrlsAndSet(url) {
         let urls = url.split(";")
-        let handlesJson = await ParseCFHandlesCached()
         for (let i = 0; i < urls.length; i++) {
             if (urls[i] === "") return
-            let key = "o:" + CF_ORG_URL_TO_ID(urls[i])
-            let handles = handlesJson[key]
+            let handles = (await ParseCFHandlesCached(urls[i])).handles
+            if(handles == undefined) handles = ""
             handles.split(";").map(h => this.state.handlesSet.add(h))
         }
 
