@@ -1,6 +1,7 @@
 import { ParseCFOrgs, ParseHandlesFromSingleURLAndPages, CF_ORG_URL}  from './lib/CF'
 import {Component} from 'react'
 import { Spinner, Table, Form, Col, InputGroup, FormControl, Button, ProgressBar } from 'react-bootstrap'
+import { StringToHandleSet } from './lib/Handles'
 
 
 
@@ -81,7 +82,12 @@ export default class AssetSetup extends Component {
             let fileName = "id.org." + org.id + ".json"
             const work = async () => {
                 let handles = await ParseHandlesFromSingleURLAndPages(CF_ORG_URL(org.id), org.hc)
-                this.AutoDownload(fileName, JSON.stringify({ handles: handles }))
+                let phc = StringToHandleSet(handles).size
+                if(phc >= org.hc){
+                    this.AutoDownload(fileName, JSON.stringify({ handles: handles }))
+                } else {
+                    console.table({log:"Couldn't parse org", orgID:org.id, orgName:org.name, handles:handles, parsedHandleCount:phc, expectedHandleCount:org.hc})
+                }
             }
 
             if (!this.ls.has(fileName)) {
