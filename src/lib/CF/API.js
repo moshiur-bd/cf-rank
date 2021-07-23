@@ -1,23 +1,18 @@
 
-import {UniqueParsedHandles} from './Handles'
-
+import {UniqueParsedHandles} from '../Handles'
+import {CF_API, CF_FE, CONTEST_FINISHED} from './Constants'
 
 const ProxyHost = `http://localhost:8080/`
 
-
-const CF_API = "https://codeforces.com/api"
-const CF_FE = "https://codeforces.com"
 const CF_STANDING_URL = (id, unofficial, users) => `/contest.standings?showUnofficial=` + unofficial + `&contestId=` + id + `&handles=` + users
 const CF_USER_INFO = (users) => `/user.info?handles=` + users
-export const CF_ORG_URL = (orgID) => CF_FE + `/ratings/organization/` + orgID
-export const CF_ORG_URL_TO_ID = (url) => url.substr(url.lastIndexOf('/') + 1)
 
-const CONTEST_FINISHED = "FINISHED"
+
 
 const MAX_ASYNC_HANDLE_PARSER_PER_URL = 20
 
 
-export async function ParseCFUsersFromURL(url){
+async function ParseCFUsersFromURL(url){
     return fetch(ProxyHost+url, {
         "X-Requested-With": "cf"
     })
@@ -69,7 +64,7 @@ export async function ParseHandlesFromSingleURLAndPages(url, handleCount) {
             }
         }
 
-        if (cnt <= 0) {
+        if (cnt <= 150) {
             break
         }
     }
@@ -118,31 +113,6 @@ export async function ParseCFOrgs() {
         });
 }
 
-export async function ParseCFOrgsCached() {
-    return fetch("/assets/orgs.json", {
-        headers:{
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        }
-    })
-    .then((response) => {
-        return response.json()
-    })
-}
-
-export async function ParseCFHandlesCached(url) {
-    let orgID = CF_ORG_URL_TO_ID(url)
-    return fetch("/assets/handles/id.org." + orgID + ".json", {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        }
-    })
-        .then((response) => {
-            return response.json()
-        })
-}
-
 // rate limit to 4 calls every second
 class Lock {
     constructor(counter) {
@@ -175,8 +145,6 @@ const RATE_LIMIT = 5
 const MAX_RETRY = 50
 let lock = new Lock(RATE_LIMIT)
 
-
-
 async function RateLimitFetch(url){
     let retryCount = MAX_RETRY
     let resp
@@ -194,7 +162,6 @@ async function RateLimitFetch(url){
     }
     return resp
 }
-    
 
 export async function FetchRanks(contestID, users, unofficial){
     var errored = false
@@ -230,39 +197,3 @@ export async function FetchUserInfo(users) {
     return (await resp.json()).result
 }
 
-
-export function GetContestStatusText(status) {
-    if (status === CONTEST_FINISHED) {
-        return "Final Standings"
-    }
-
-    if (status === "PENDING_SYSTEM_TEST") {
-        return "Pending System Test"
-    }
-
-    if (status === "SYSTEM_TEST") {
-        return "System Testing"
-    }
-
-    if (status === "CODING") {
-        return "Contest is Running"
-    }
-}
-
-export function GetHandleTitle(rating) {
-    if (rating < 1200) {
-        return "newbie"
-    }
-
-    if (rating < 1400) {
-        return "pupil"
-    }
-
-    if (rating < 1600) {
-        return "specialist"
-    }
-
-    if (rating < 1900) {
-        return "expert"
-    }
-}

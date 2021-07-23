@@ -1,4 +1,4 @@
-import { GetHandleTitle } from "./CF";
+import { GetHandleTitle } from "./CF/Local";
 
 export const UserDefined = 1;
 export const OrgDefined = 2;

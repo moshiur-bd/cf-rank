@@ -2,7 +2,8 @@ import { Spinner, Table, Form, Col, InputGroup, FormControl, Button, ProgressBar
 import RankRow from "./RankRow"
 import Navigation from "./Navigation"
 import React from 'react'
-import { ParseHandlesFromSingleURLAndPages, FetchRanks, GetContestStatusText, FetchUserInfo, ParseCFHandlesCached, CF_ORG_URL_TO_ID} from "../lib/CF"
+import { ParseHandlesFromSingleURLAndPages, FetchRanks, FetchUserInfo } from "../lib/CF/API"
+import { GetContestStatusText, ParseCFHandlesCached, CF_ORG_URL_TO_ID } from "../lib/CF/Local"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/RankList.css';
 import logo from '../logo.svg';

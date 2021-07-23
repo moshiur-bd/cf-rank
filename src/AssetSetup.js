@@ -1,4 +1,5 @@
-import { ParseCFOrgs, ParseHandlesFromSingleURLAndPages, CF_ORG_URL}  from './lib/CF'
+import { ParseCFOrgs, ParseHandlesFromSingleURLAndPages } from './lib/CF/API'
+import { CF_ORG_URL } from './lib/CF/Local'
 import {Component} from 'react'
 import { Spinner, Table, Form, Col, InputGroup, FormControl, Button, ProgressBar } from 'react-bootstrap'
 import { StringToHandleSet } from './lib/Handles'

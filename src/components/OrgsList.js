@@ -3,7 +3,8 @@ import React, { useDebugValue } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/OrgsList.css';
 import logo from '../logo.svg';
-import { ParseCFOrgs, ParseCFOrgsCached, CF_ORG_URL } from '../lib/CF'
+import { ParseCFOrgs } from '../lib/CF/API'
+import { ParseCFOrgsCached, CF_ORG_URL } from '../lib/CF/Local'
 
 import { Link } from 'react-router-dom'
 
