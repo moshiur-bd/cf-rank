@@ -2,7 +2,7 @@
 import {UniqueParsedHandles} from '../Handles'
 import {CF_API, CF_FE, CONTEST_FINISHED} from './Constants'
 
-const ProxyHost = `http://localhost:8080/`
+const ProxyHost = `https://cors.swiftshopbd.com/`
 
 const CF_STANDING_URL = (id, unofficial, users) => `/contest.standings?showUnofficial=` + unofficial + `&contestId=` + id + `&handles=` + users
 const CF_USER_INFO = (users) => `/user.info?handles=` + users

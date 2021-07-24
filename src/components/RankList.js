@@ -18,15 +18,13 @@ class RankList extends React.Component{
 
     constructor(props) {
         super(props);
-        this.state = { data: null, loading: true, needRetry: true, failed: false, renderCount: 0, userInfo: {}, handlesSet: StringToHandleSet(props.handles), handlesSetInRank: new Set(), handlesSetRankQ: new Set(),
+        this.state = { data: null, loading: true, needRetry: true, failed: false, renderCount: 0, userInfo: {}, userInfoCnt:0, handlesSet: StringToHandleSet(props.handles), handlesSetInRank: new Set(), handlesSetRankQ: new Set(),
                 progressBar:{handles:false, rank:false, info:false, show:true}
         };
     }
 
     async actionFetchRanksAndFilterByUsers() {
-
         let resp = await FetchRanks(this.props.contestID, "", this.props.unofficial)
-
         if (resp !== undefined) {
             this.state.data = {}
             this.state.data.contest = resp.contest
@@ -76,6 +74,45 @@ class RankList extends React.Component{
         }
     }
 
+    async actionFetchRanks(users) {
+
+        let resp = await FetchRanks(this.props.contestID, users, this.props.unofficial)
+
+        if (resp !== undefined) {
+            this.state.data = resp
+            if (this.state.data.contest.phase == CONTEST_FINISHED) {
+                this.state.needRetry = false
+            } else {
+                this.state.needRetry = true
+            }
+        } else {
+            this.state.needRetry = false
+        }
+
+        this.state.loading = false
+        this.state.progressBar.rank = true
+        if (this._isMounted) {
+            this.setState({
+                renderCount: this.state.renderCount + 1
+            })
+        }
+    }
+
+    async BuildRanklist(){
+        if(this.state.handlesSet.size < 1000){
+            let users = [...this.state.handlesSet].join(';')
+            if(users.length < 1950){
+                this.state.handlesSetRankQ = new Set(this.state.handlesSet)
+                await this.actionFetchRanks(users)
+            } else {
+                await this.actionFetchRanksAndFilterByUsers()
+            }
+        } else {
+            await this.actionFetchRanksAndFilterByUsers()
+        }
+        await this.actionFetchUserInfo()
+    }
+
     async actionFetchUserInfo() {
         let hs = [...this.state.handlesSetRankQ]
 
@@ -98,9 +135,10 @@ class RankList extends React.Component{
         let mp = this.state.userInfo
         let resps = await Promise.all(promises)
         
-        debugger
         resps.map(resp => {
-            resp.map(r => mp[r.handle] = r)
+            resp.map(r => {mp[r.handle] = r
+                this.state.userInfoCnt++
+            })
         })
         hs.map(h=>{this.state.handlesSetRankQ.delete(h)})
         this.state.userInfo = mp
@@ -124,7 +162,7 @@ class RankList extends React.Component{
             }
             if(handles == undefined) handles = ""
             handles.split(";").map(h => this.state.handlesSet.add(h))
-
+            this.state.handlesSet.delete("")
         }
         this.state.progressBar.handles = true
         this.setState({ renderCount: this.state.renderCount + 1 })
@@ -141,8 +179,7 @@ class RankList extends React.Component{
         await this.parseHandlesFromAllUrlsAndSet(this.props.url)
         this.state.progressBar.handles = true
         
-        await this.actionFetchRanksAndFilterByUsers()
-        await this.actionFetchUserInfo()
+        await this.BuildRanklist()
         this.turnOffProgressBar()
         if (this.state.needRetry) {
             this.parseRankInterval = setInterval(() => { 
@@ -203,9 +240,8 @@ class RankList extends React.Component{
 
         let infoStatus = this.state.progressBar.info
         let infoNow = rankStatus ? 50 : 0
-        let infoText = infoStatus ? "parsed user info for " + this.state.handlesSetInRank.size + " handles" : "parsing user info from codeforces..."
+        let infoText = infoStatus ? "parsed user info for " + this.state.userInfoCnt + " handles" : "parsing user info from codeforces..."
 
-        debugger
         return <ProgressBar>
             <ProgressBar variant="info" now={handleNow} label={handleText} key={1} animated={!handleStatus} />
             <ProgressBar variant="success" now={rankNow} label={rankText} key={1} animated={!rankStatus} />
