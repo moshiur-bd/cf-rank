@@ -12,6 +12,7 @@ import { IsSameHandles, UniqueParsedHandles, StringToHandleSet } from "../lib/Ha
 
 
 const CONTEST_FINISHED = "FINISHED"
+const MaxHandlesLengthForGetURL = 1950
 
 class RankList extends React.Component{
     _isMounted = false
@@ -101,7 +102,7 @@ class RankList extends React.Component{
     async BuildRanklist(){
         if(this.state.handlesSet.size < 1000){
             let users = [...this.state.handlesSet].join(';')
-            if(users.length < 1950){
+            if(users.length < MaxHandlesLengthForGetURL){
                 this.state.handlesSetRankQ = new Set(this.state.handlesSet)
                 await this.actionFetchRanks(users)
             } else {
@@ -116,17 +117,16 @@ class RankList extends React.Component{
     async actionFetchUserInfo() {
         let hs = [...this.state.handlesSetRankQ]
 
-        let handles = "", hc = 0
+        let handles = ""
         let promises = []
 
-        hs.map(h => {
-            handles += (h + ";")
-            hc++
-            if (hc % 200 == 0) {
+        for(let i = 0; i < hs.length; i++){
+            if ((hs[i] + handles).length > MaxHandlesLengthForGetURL){
                 promises.push(FetchUserInfo(handles))
                 handles = ""
             }
-        })
+            handles += (hs[i] + ";")
+        }
         if(handles != "")
         {
             promises.push(FetchUserInfo(handles))
