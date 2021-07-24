@@ -18,7 +18,9 @@ class RankList extends React.Component{
 
     constructor(props) {
         super(props);
-        this.state = { data: null, loading: true, needRetry: true, failed: false, renderCount: 0, userInfo: {}, handlesSet: StringToHandleSet(props.handles), handlesSetInRank: new Set(), handlesSetRankQ: new Set()};
+        this.state = { data: null, loading: true, needRetry: true, failed: false, renderCount: 0, userInfo: {}, handlesSet: StringToHandleSet(props.handles), handlesSetInRank: new Set(), handlesSetRankQ: new Set(),
+                progressBar:{handles:false, rank:false, info:false, show:true}
+        };
     }
 
     async actionFetchRanksAndFilterByUsers() {
@@ -51,6 +53,10 @@ class RankList extends React.Component{
                 }
                 
             })
+
+            this.state.progressBar.rank = true
+            this.setState({ renderCount: this.state.renderCount + 1 })
+
             q.forEach(h => {this.state.handlesSetRankQ.add(h)})
 
             if (this.state.data.contest.phase == CONTEST_FINISHED) {
@@ -98,6 +104,7 @@ class RankList extends React.Component{
         })
         hs.map(h=>{this.state.handlesSetRankQ.delete(h)})
         this.state.userInfo = mp
+        this.state.progressBar.info = true
         if (this._isMounted) {
             this.setState({
                 renderCount: this.state.renderCount + 1
@@ -108,6 +115,8 @@ class RankList extends React.Component{
     async parseHandlesFromAllUrlsAndSet(url) {
         let urls = url.split(";")
         for (let i = 0; i < urls.length; i++) {
+            this.state.progressBar.handles = false
+            this.setState({ renderCount: this.state.renderCount + 1 })
             if (urls[i] === "") return
             let handles = (await ParseCFHandlesCached(urls[i])).handles
             if(handles === ""){
@@ -115,16 +124,26 @@ class RankList extends React.Component{
             }
             if(handles == undefined) handles = ""
             handles.split(";").map(h => this.state.handlesSet.add(h))
+
         }
+        this.state.progressBar.handles = true
+        this.setState({ renderCount: this.state.renderCount + 1 })
 
         console.table({ log: "Total handles", count: this.state.handlesSet.size})
     }
 
+    async turnOffProgressBar() {
+        await new Promise(resolve => setTimeout(resolve, 1000 * 5));
+        this.setState({ progressBar: {show:false}, renderCount: this.state.renderCount + 1})
+    }
+
     async setRefreshIfNecessary(){
         await this.parseHandlesFromAllUrlsAndSet(this.props.url)
+        this.state.progressBar.handles = true
+        
         await this.actionFetchRanksAndFilterByUsers()
         await this.actionFetchUserInfo()
-
+        this.turnOffProgressBar()
         if (this.state.needRetry) {
             this.parseRankInterval = setInterval(() => { 
                 this.actionFetchRanksAndFilterByUsers().then(
@@ -154,7 +173,7 @@ class RankList extends React.Component{
         return false
     }
 
-    displayProgressBar(relativeTimeSeconds, durationSeconds) {
+    displayContestProgressBar(relativeTimeSeconds, durationSeconds) {
         if (relativeTimeSeconds == undefined || durationSeconds == undefined) {
             return
         }
@@ -169,12 +188,40 @@ class RankList extends React.Component{
         </tr>
     }
 
+
+    renderProgressBar() {
+        if(!this.state.progressBar.show){
+            return <div></div>
+        }
+        let handleStatus = this.state.progressBar.handles
+        let handleNow = 50
+        let handleText = handleStatus ? "parsed " + this.state.handlesSet.size + " handles" : "parsing handles from urls: " + this.state.handlesSet.size
+
+        let rankStatus = this.state.progressBar.rank
+        let rankNow = handleStatus?50:0
+        let rankText = rankStatus ? "ranklist contains " + this.state.data.rows.length + " matching rows" : "parsing ranklist from codeforces..."
+
+        let infoStatus = this.state.progressBar.info
+        let infoNow = rankStatus ? 50 : 0
+        let infoText = infoStatus ? "parsed user info for " + this.state.handlesSetInRank.size + " handles" : "parsing user info from codeforces..."
+
+        debugger
+        return <ProgressBar>
+            <ProgressBar variant="info" now={handleNow} label={handleText} key={1} animated={!handleStatus} />
+            <ProgressBar variant="success" now={rankNow} label={rankText} key={1} animated={!rankStatus} />
+            <ProgressBar variant="info" now={infoNow} label={infoText} key={1} animated={!infoStatus} />
+        </ProgressBar>
+    }
+
     render() {
         let invalidArgs = (this.props.handles == "") && (this.props.url == "")
 
         if (invalidArgs) {
             this.state.loading = false
         }
+
+        
+
         if (invalidArgs || this.state.data == null) {
 
             if (this.state.loading == false) {
@@ -187,6 +234,7 @@ class RankList extends React.Component{
 
             } else {
                 return <div>
+                    {this.renderProgressBar()}
                     <div className="loading">
                         <Spinner style={{ width: "100px", height: "100px" }} animation="border" role="status">
                             <span className="sr-only">Loading...</span>
@@ -209,6 +257,7 @@ class RankList extends React.Component{
         }
 
         return <div>
+            {this.renderProgressBar()}
             {cf.contest.phase === CONTEST_FINISHED && <img src={logo} className="App-logo" alt="logo" />}
             {cf.contest.phase !== CONTEST_FINISHED && <img src={logo} className="App-logo-animate" alt="logo" />}
 
@@ -224,7 +273,7 @@ class RankList extends React.Component{
                                 <a target="_blank" href={"https://codeforces.com/contest/" + this.props.contestID + "/standings"}>{GetContestStatusText(cf.contest.phase)}</a>
                             </th>
                         </tr>
-                        {this.displayProgressBar(cf.contest.relativeTimeSeconds, cf.contest.durationSeconds)}
+                        {this.displayContestProgressBar(cf.contest.relativeTimeSeconds, cf.contest.durationSeconds)}
                         <tr>
                             <th style={{ "text-align": "left" }}><span className="hash-rank" >#</span></th>
                             <th style={{ "text-align": "center" }}>Rank</th>
