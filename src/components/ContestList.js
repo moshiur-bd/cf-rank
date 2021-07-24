@@ -1,10 +1,7 @@
-import { Spinner, Table, Form, Col, InputGroup, FormControl, Button } from 'react-bootstrap'
-import React, { useDebugValue } from 'react'
+import { Spinner, Table, FormControl } from 'react-bootstrap'
+import React from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './ContestList.css';
-import logo from '../logo.svg';
-import { ParseCFOrgs, ParseCFOrgsCached } from '../lib/CF'
-
+import './css/ContestList.css';
 import { GetContestUrl } from "../lib/Goto"
 
 

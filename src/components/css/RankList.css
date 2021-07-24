@@ -1,0 +1,33 @@
+
+.table-sm td, .table-sm th {
+    padding: 0px 1px;
+}
+
+.hash-rank{
+    padding-left: 10px;
+}
+
+.con-tittle{
+    padding: 10px;
+}
+
+.input-url{
+    margin: 1% 5%;
+}
+
+.white-hyperlink a{
+    color:#fff
+}
+
+.loading{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 100vh;
+}
+
+.loading p{
+    padding-top: 20vh;
+}

@@ -1,4 +1,4 @@
-import { GetHandleTitle } from "./CF";
+import { GetHandleTitle } from "./CF/Local";
 
 export const UserDefined = 1;
 export const OrgDefined = 2;
@@ -30,7 +30,9 @@ function eqSet(as, bs) {
 
 export function StringToHandleSet(handles){
     if(handles == undefined || handles == null) return new Set();
-    return new Set(handles.split(";"))
+    let hs = new Set(handles.split(";"))
+    hs.delete("")
+    return hs
 }
 
 export function HandleSetToString(handles) {
@@ -44,7 +46,7 @@ export function UniqueParsedHandles(hParsed, oldHandles){
     return {
         cnt: diff.size,
         unq: HandleSetToString(diff),
-        tot: oh.size + diff.size - 1
+        tot: oh.size + diff.size
     }
 }
 

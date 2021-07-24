@@ -1,10 +1,8 @@
-import Input from './Input'
-import { useLocation } from 'react-router';
 
-import { useState, useEffect } from 'react'
-import { Spinner, Table, Form, Col, InputGroup, FormControl, Button, Navbar, Nav, ToggleButton} from 'react-bootstrap'
+import { useState } from 'react'
+import { Form, FormControl, Button, Navbar, Nav} from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import "./Navigation.css"
+import "./css/Navigation.css"
 import {BuildUrl} from "../lib/UrlInfo"
 import {GetRanklistUrl} from "../lib/Goto"
 

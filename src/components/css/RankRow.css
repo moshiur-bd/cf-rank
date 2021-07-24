@@ -1,0 +1,66 @@
+.handle-cell-div{
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: left;
+    justify-content: left;
+    text-align: center;
+}
+.handle{
+    margin: 0% 2%;
+}
+.handle a{
+    color:#fff;
+}
+
+
+.rank-cell-div{
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+.rank-main-content{
+    flex-grow: 0;
+}
+
+.rank-side-content{
+    min-width: 1em;
+    max-width: 1em;
+}
+
+
+.cell-points{
+    margin: auto;
+    padding: 0;
+    align-items: center;
+    display: block;
+    font-size: 80%;
+    color: lightskyblue;
+}
+
+.cell-rejected{
+    flex-grow: 0;
+    margin: auto;
+    padding: 2%;
+    color: peru;
+    font-size: 60%;
+    display: inline-block;
+}
+
+.cell-time{
+    margin: 0;
+    padding: 0;
+    align-items: center;
+    display: block;
+    font-size: 53%;
+    color:honeydew;
+}
+
+.rank-font{
+    font-size: 80%;
+}
+
+.total-points{
+    padding: 0px 5px;
+}

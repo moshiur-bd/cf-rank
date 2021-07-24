@@ -1,9 +1,14 @@
 import React from 'react'
-import './RankRow.css'
-import './CFHandles.css'
+import './css/RankRow.css'
+import './css/CFHandles.css'
 
 
-const rankToCSSClassName =(rank) => rank.replace(/\s/g, "");
+const rankToCSSClassName =(rank) =>{
+    if(typeof rank === 'string' || rank instanceof String){  
+        return rank.replace(/\s/g, "")
+    }
+    return ""
+};
 
 function validStr(str){
     if(str === undefined || str === null)

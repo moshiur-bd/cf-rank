@@ -2,35 +2,80 @@ import { Spinner, Table, Form, Col, InputGroup, FormControl, Button, ProgressBar
 import RankRow from "./RankRow"
 import Navigation from "./Navigation"
 import React from 'react'
-import { ParseCFUsersFromURL, FetchRanks, GetContestStatusText, FetchUserInfo} from "../lib/CF"
+import { ParseCFHandles, FetchRanks, FetchUserInfo } from "../lib/CF/API"
+import { GetContestStatusText, ParseCFHandlesCached, CF_ORG_URL_TO_ID } from "../lib/CF/Local"
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './RankList.css';
+import './css/RankList.css';
 import logo from '../logo.svg';
 import { GetRanklistUrl} from "../lib/Goto"
-import { IsSameHandles, UniqueParsedHandles } from "../lib/Handles"
-
-
-
+import { IsSameHandles, UniqueParsedHandles, StringToHandleSet } from "../lib/Handles"
 
 
 const CONTEST_FINISHED = "FINISHED"
-const MAX_ASYNC_HANDLE_PARSER_PER_URL = 2
-
-
+const MaxHandlesLengthForGetURL = 1950
 
 class RankList extends React.Component{
     _isMounted = false
 
     constructor(props) {
         super(props);
-        let h = props.handles;
-        if(props.url !== ""){
-            h = h + props.parsedHandles
-        }
-        this.state = { data: null, loading:true, needRetry:true, failed:false, handles: h, renderCount: 0, userInfo:{} };
+        this.state = { data: null, loading: true, needRetry: true, failed: false, renderCount: 0, userInfo: {}, userInfoCnt:0, handlesSet: StringToHandleSet(props.handles), handlesSetInRank: new Set(), handlesSetRankQ: new Set(),
+                progressBar:{handles:false, rank:false, info:false, show:true}
+        };
     }
 
-    async actionFetchRanks(users){
+    async actionFetchRanksAndFilterByUsers() {
+        let resp = await FetchRanks(this.props.contestID, "", this.props.unofficial)
+        if (resp !== undefined) {
+            this.state.data = {}
+            this.state.data.contest = resp.contest
+            this.state.data.problems = resp.problems
+            this.state.data.rows = []
+            
+            let q = new Set()
+            resp.rows.map(r => {
+                let take = false
+                r.party.members.map(m => {
+                    if(this.state.handlesSet.has(m.handle)){
+                        take = true
+                    }
+                })
+                
+                if(take){
+                    this.state.data.rows.push(r)
+                    r.party.members.map(m => {
+                        if(this.state.handlesSetInRank.has(m.handle) == false) {
+                            this.state.handlesSetInRank.add(m.handle)
+                            q.add(m.handle)
+                        }
+                    })
+                }
+                
+            })
+
+            this.state.progressBar.rank = true
+            this.setState({ renderCount: this.state.renderCount + 1 })
+
+            q.forEach(h => {this.state.handlesSetRankQ.add(h)})
+
+            if (this.state.data.contest.phase == CONTEST_FINISHED) {
+                this.state.needRetry = false
+            } else {
+                this.state.needRetry = true
+            }
+        } else {
+            this.state.needRetry = false
+        }
+
+        this.state.loading = false
+        if (this._isMounted) {
+            this.setState({
+                renderCount: this.state.renderCount + 1
+            })
+        }
+    }
+
+    async actionFetchRanks(users) {
 
         let resp = await FetchRanks(this.props.contestID, users, this.props.unofficial)
 
@@ -44,25 +89,9 @@ class RankList extends React.Component{
         } else {
             this.state.needRetry = false
         }
-    
+
         this.state.loading = false
-        if(this._isMounted){
-            this.setState({
-                renderCount:this.state.renderCount + 1
-            })
-        }
-    }
-
-    async actionFetchUserInfo(users) {
-        let resp = await FetchUserInfo(users)
-        if (resp !== undefined) {
-            let mp = {}
-            resp.map(r => mp[r.handle] = r)
-            this.state.userInfo = mp
-        } else {
-            console.log("user-info not found. unable to set colors")
-        }
-
+        this.state.progressBar.rank = true
         if (this._isMounted) {
             this.setState({
                 renderCount: this.state.renderCount + 1
@@ -70,89 +99,94 @@ class RankList extends React.Component{
         }
     }
 
-    async parseHandlesFromSingleURLAndPages(url) {
-        let handles = ""
-        let pageID = 1
-
-        while(true){
-            let promises = []
-            for (let i = 1; i <= MAX_ASYNC_HANDLE_PARSER_PER_URL; i++) {
-                promises.push(ParseCFUsersFromURL(url + "/page/" + pageID))
-                pageID++
+    async BuildRanklist(){
+        if(this.state.handlesSet.size < 1000){
+            let users = [...this.state.handlesSet].join(';')
+            if(users.length < MaxHandlesLengthForGetURL){
+                this.state.handlesSetRankQ = new Set(this.state.handlesSet)
+                await this.actionFetchRanks(users)
+            } else {
+                await this.actionFetchRanksAndFilterByUsers()
             }
-
-            let pHandles = await Promise.all(promises)
-
-            for (let i = 0; i < pHandles.length; i++) {
-                var { unq, cnt, tot } = UniqueParsedHandles(pHandles[i], handles)
-                if (cnt > 0) {
-                    handles += unq
-                } else {
-                    break
-                }
-            }
-            
-            if(cnt <= 0 || pageID > 20) {
-                break
-            }
+        } else {
+            await this.actionFetchRanksAndFilterByUsers()
         }
-        
-        console.table({ log: "Parse handle result per url", url: url, total: tot, handles:handles })
-        return handles
+        await this.actionFetchUserInfo()
     }
 
-    async parseHandlesFromAllUrls(url){
+    async actionFetchUserInfo() {
+        let hs = [...this.state.handlesSetRankQ]
+
         let handles = ""
-        let urls = url.split(";")
         let promises = []
-        for(let i = 0; i < urls.length; i++){
-            if(urls[i] === "") return
-            promises.push(this.parseHandlesFromSingleURLAndPages(urls[i]))
-        }
 
-        let pHandles = await Promise.all(promises)
-
-        for(let i = 0; i < pHandles.length; i++){
-            var { unq, cnt, tot } = UniqueParsedHandles(pHandles[i], handles)
-            if(cnt > 0){
-                handles += unq
+        for(let i = 0; i < hs.length; i++){
+            if ((hs[i] + handles).length > MaxHandlesLengthForGetURL){
+                promises.push(FetchUserInfo(handles))
+                handles = ""
             }
+            handles += (hs[i] + ";")
         }
-        console.table({ log: "Total handles parsed", total: tot, handles:handles})
-        return handles
+        if(handles != "")
+        {
+            promises.push(FetchUserInfo(handles))
+            handles = ""
+        }
+        let mp = this.state.userInfo
+        let resps = await Promise.all(promises)
+        
+        resps.map(resp => {
+            resp.map(r => {mp[r.handle] = r
+                this.state.userInfoCnt++
+            })
+        })
+        hs.map(h=>{this.state.handlesSetRankQ.delete(h)})
+        this.state.userInfo = mp
+        this.state.progressBar.info = true
+        if (this._isMounted) {
+            this.setState({
+                renderCount: this.state.renderCount + 1
+            })
+        }
     }
 
-    async parseHandles() {
-        if(this.props.url === undefined || this.props.url === ""){
-            return
+    async parseHandlesFromAllUrlsAndSet(url) {
+        let urls = url.split(";")
+        for (let i = 0; i < urls.length; i++) {
+            this.state.progressBar.handles = false
+            this.setState({ renderCount: this.state.renderCount + 1 })
+            if (urls[i] === "") return
+            let handles = (await ParseCFHandlesCached(urls[i])).handles
+            if(handles === ""){
+                handles = (await ParseCFHandles(urls[i])).handles
+            }
+            if(handles == undefined) handles = ""
+            handles.split(";").map(h => this.state.handlesSet.add(h))
+            this.state.handlesSet.delete("")
         }
-        this.state.loading = true
-        let handles = await this.parseHandlesFromAllUrls(this.props.url)
+        this.state.progressBar.handles = true
+        this.setState({ renderCount: this.state.renderCount + 1 })
 
-        var { unq, cnt, tot } = UniqueParsedHandles(handles, this.props.handles)
+        console.table({ log: "Total handles", count: this.state.handlesSet.size})
+    }
 
-        console.table({ log: "Total handles parsed - custom handles", total: tot, totalHandles: handles, uniqueHandles: unq, uniqueCount: cnt })
-
-
-        let isSame = IsSameHandles(unq, this.props.parsedHandles)
-        if (isSame){
-            return
-        }
-
-
-        if (this._isMounted) {
-            this.props.history.push(GetRanklistUrl(this.props.contestID, this.props.url, this.props.handles, unq, this.props.unofficial))
-        }
+    async turnOffProgressBar() {
+        await new Promise(resolve => setTimeout(resolve, 1000 * 5));
+        this.setState({ progressBar: {show:false}, renderCount: this.state.renderCount + 1})
     }
 
     async setRefreshIfNecessary(){
-        if(this.state.handles !== "") {
-            this.actionFetchRanks(this.state.handles)
-            this.actionFetchUserInfo(this.state.handles)
-        }
-        await this.parseHandles()
+        await this.parseHandlesFromAllUrlsAndSet(this.props.url)
+        this.state.progressBar.handles = true
+        
+        await this.BuildRanklist()
+        this.turnOffProgressBar()
         if (this.state.needRetry) {
-            this.parseRankInterval = setInterval(() => { this.actionFetchRanks(this.state.handles) }, 30000);
+            this.parseRankInterval = setInterval(() => { 
+                this.actionFetchRanksAndFilterByUsers().then(
+                () => this.actionFetchUserInfo()
+                )
+            }, 30000);
         }
     }
     componentWillUnmount() {
@@ -165,8 +199,6 @@ class RankList extends React.Component{
         this._isMounted = true
     }
      
-
-
     shouldComponentUpdate(nextProps, nextState) {
         if (nextState.renderCount != this.state.renderCount) {
             return true
@@ -178,8 +210,7 @@ class RankList extends React.Component{
         return false
     }
 
-
-    displayProgressBar(relativeTimeSeconds, durationSeconds) {
+    displayContestProgressBar(relativeTimeSeconds, durationSeconds) {
         if (relativeTimeSeconds == undefined || durationSeconds == undefined) {
             return
         }
@@ -194,12 +225,39 @@ class RankList extends React.Component{
         </tr>
     }
 
+
+    renderProgressBar() {
+        if(!this.state.progressBar.show){
+            return <div></div>
+        }
+        let handleStatus = this.state.progressBar.handles
+        let handleNow = 50
+        let handleText = handleStatus ? "parsed " + this.state.handlesSet.size + " handles" : "parsing handles from urls: " + this.state.handlesSet.size
+
+        let rankStatus = this.state.progressBar.rank
+        let rankNow = handleStatus?50:0
+        let rankText = rankStatus ? "ranklist contains " + this.state.data.rows.length + " matching rows" : "parsing ranklist from codeforces..."
+
+        let infoStatus = this.state.progressBar.info
+        let infoNow = rankStatus ? 50 : 0
+        let infoText = infoStatus ? "parsed user info for " + this.state.userInfoCnt + " handles" : "parsing user info from codeforces..."
+
+        return <ProgressBar>
+            <ProgressBar variant="info" now={handleNow} label={handleText} key={1} animated={!handleStatus} />
+            <ProgressBar variant="success" now={rankNow} label={rankText} key={1} animated={!rankStatus} />
+            <ProgressBar variant="info" now={infoNow} label={infoText} key={1} animated={!infoStatus} />
+        </ProgressBar>
+    }
+
     render() {
         let invalidArgs = (this.props.handles == "") && (this.props.url == "")
 
         if (invalidArgs) {
             this.state.loading = false
         }
+
+        
+
         if (invalidArgs || this.state.data == null) {
 
             if (this.state.loading == false) {
@@ -212,6 +270,7 @@ class RankList extends React.Component{
 
             } else {
                 return <div>
+                    {this.renderProgressBar()}
                     <div className="loading">
                         <Spinner style={{ width: "100px", height: "100px" }} animation="border" role="status">
                             <span className="sr-only">Loading...</span>
@@ -234,6 +293,7 @@ class RankList extends React.Component{
         }
 
         return <div>
+            {this.renderProgressBar()}
             {cf.contest.phase === CONTEST_FINISHED && <img src={logo} className="App-logo" alt="logo" />}
             {cf.contest.phase !== CONTEST_FINISHED && <img src={logo} className="App-logo-animate" alt="logo" />}
 
@@ -249,7 +309,7 @@ class RankList extends React.Component{
                                 <a target="_blank" href={"https://codeforces.com/contest/" + this.props.contestID + "/standings"}>{GetContestStatusText(cf.contest.phase)}</a>
                             </th>
                         </tr>
-                        {this.displayProgressBar(cf.contest.relativeTimeSeconds, cf.contest.durationSeconds)}
+                        {this.displayContestProgressBar(cf.contest.relativeTimeSeconds, cf.contest.durationSeconds)}
                         <tr>
                             <th style={{ "text-align": "left" }}><span className="hash-rank" >#</span></th>
                             <th style={{ "text-align": "center" }}>Rank</th>

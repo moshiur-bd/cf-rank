@@ -1,0 +1,30 @@
+.legendarygrandmaster span{
+    color: #000000
+}
+.legendarygrandmaster div, .internationalgrandmaster div, .grandmaster div{
+    color: #ff0000
+}
+
+.internationalmaster div, .master div{
+    color:#ff8c00
+}
+
+.candidatemaster div{
+    color:#a0a;
+}
+
+.expert div{
+    color:#1b6cff
+}
+
+.specialist div{
+    color:#03a89e
+}
+
+.pupil div{
+    color: #008000
+}
+
+.newbie div{
+    color: #808080
+}
