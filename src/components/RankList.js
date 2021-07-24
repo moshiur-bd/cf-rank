@@ -2,7 +2,7 @@ import { Spinner, Table, Form, Col, InputGroup, FormControl, Button, ProgressBar
 import RankRow from "./RankRow"
 import Navigation from "./Navigation"
 import React from 'react'
-import { ParseHandlesFromSingleURLAndPages, FetchRanks, FetchUserInfo } from "../lib/CF/API"
+import { ParseCFHandles, FetchRanks, FetchUserInfo } from "../lib/CF/API"
 import { GetContestStatusText, ParseCFHandlesCached, CF_ORG_URL_TO_ID } from "../lib/CF/Local"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/RankList.css';
@@ -110,6 +110,9 @@ class RankList extends React.Component{
         for (let i = 0; i < urls.length; i++) {
             if (urls[i] === "") return
             let handles = (await ParseCFHandlesCached(urls[i])).handles
+            if(handles === ""){
+                handles = (await ParseCFHandles(urls[i])).handles
+            }
             if(handles == undefined) handles = ""
             handles.split(";").map(h => this.state.handlesSet.add(h))
         }
@@ -140,8 +143,6 @@ class RankList extends React.Component{
         this._isMounted = true
     }
      
-
-
     shouldComponentUpdate(nextProps, nextState) {
         if (nextState.renderCount != this.state.renderCount) {
             return true
@@ -152,7 +153,6 @@ class RankList extends React.Component{
         }
         return false
     }
-
 
     displayProgressBar(relativeTimeSeconds, durationSeconds) {
         if (relativeTimeSeconds == undefined || durationSeconds == undefined) {

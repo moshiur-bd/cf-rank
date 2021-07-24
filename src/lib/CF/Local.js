@@ -27,6 +27,9 @@ export async function ParseCFHandlesCached(url) {
         }
     })
         .then((response) => {
+            if(response.status !== 200) {
+                return {handles:""}
+            }
             return response.json()
         })
 }

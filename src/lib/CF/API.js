@@ -12,7 +12,7 @@ const CF_USER_INFO = (users) => `/user.info?handles=` + users
 const MAX_ASYNC_HANDLE_PARSER_PER_URL = 20
 
 
-async function ParseCFUsersFromURL(url){
+async function parseCFUsersFromURL(url){
     return fetch(ProxyHost+url, {
         "X-Requested-With": "cf"
     })
@@ -39,16 +39,19 @@ async function ParseCFUsersFromURL(url){
     });
 }
 
-export async function ParseHandlesFromSingleURLAndPages(url, handleCount) {
+export async function ParseCFHandles(url, handleCount) {
     let handles = ""
     let pageID = 1
 
+    let hcUnknown = (handleCount === undefined || handleCount <= 0)
 
     while (true) {
         let promises = []
-        handleCount += 100 // let's add some more handles to be sure we have all of them
+        if(hcUnknown){
+            handleCount = 1000 // make about 5 concurrent requests
+        }
         for (let i = 1; handleCount > 0 && i <= MAX_ASYNC_HANDLE_PARSER_PER_URL; i++) {
-            promises.push(ParseCFUsersFromURL(url + "/page/" + pageID))
+            promises.push(parseCFUsersFromURL(url + "/page/" + pageID))
             pageID++
             handleCount -= 200
         }
@@ -70,7 +73,7 @@ export async function ParseHandlesFromSingleURLAndPages(url, handleCount) {
     }
 
     console.table({ log: "Parse handle result per url", url: url, total: tot, handles: handles })
-    return handles
+    return {handles:handles}
 }
 
 export async function ParseCFOrgs() {
