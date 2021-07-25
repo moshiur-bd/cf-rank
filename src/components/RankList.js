@@ -303,10 +303,9 @@ class RankList extends React.Component{
             {cf.contest.phase === CONTEST_FINISHED && <img src={logo} className="App-logo" alt="logo" />}
             {cf.contest.phase !== CONTEST_FINISHED && <img src={logo} className="App-logo-animate" alt="logo" />}
 
-            <div className="con-tittle">
-                {cf.contest.name} 
-                <br></br>
-                <span style={{ fontSize: "50%" }}>{this.state.filterNames}</span>
+            <div className="con-info">
+                <div className="con-tittle"><span>{cf.contest.name}</span></div>
+                <div className="rank-filters"><span>{this.state.filterNames}</span></div>
             </div>
 
             <div className="ranklist">

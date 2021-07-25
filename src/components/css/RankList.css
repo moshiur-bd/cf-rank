@@ -7,8 +7,20 @@
     padding-left: 10px;
 }
 
+.con-info{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin: 3px 0%;
+}
+
 .con-tittle{
-    padding: 10px;
+    font-size: 80%;
+}
+.rank-filters{
+    font-size: 50%;
 }
 
 .input-url{
