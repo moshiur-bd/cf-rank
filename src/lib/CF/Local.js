@@ -7,20 +7,23 @@ export const CF_ORG_URL = (orgID) => CF_FE + `/ratings/organization/` + orgID
 export const CF_ORG_URL_TO_ID = (url) => url.substr(url.lastIndexOf('/') + 1)
 
 export async function ParseCFOrgsCached() {
-    return fetch("/assets/orgs.json", {
+    return fetch("assets/orgs.json", {
         headers:{
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         }
     })
     .then((response) => {
-        return response.json()
+        if(response.status === 200) {
+            return response.json()
+        }
+        return null
     })
 }
 
 export async function ParseCFHandlesCached(url) {
     let orgID = CF_ORG_URL_TO_ID(url)
-    return fetch("/assets/handles/id.org." + orgID + ".json", {
+    return fetch("assets/handles/id.org." + orgID + ".json", {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
