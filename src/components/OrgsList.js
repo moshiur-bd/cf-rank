@@ -97,7 +97,7 @@ class OrgsList extends React.Component{
                         this.selectRef.push(React.createRef())
                         this.refID[r.id] = this.selectRef.length - 1
                     }
-                    return <tr ref={this.selectRef[this.refID[r.id]]}>
+                    return <tr ref={this.selectRef[this.refID[r.id]]} hidden={r.hc  <= 10 || r.name.length < 2} >
                         <td >
                             <div className="div-checkbox-selector checkbox-org"> <input type="checkbox" onChange={this.handleCheckbox} value={r.id} defaultChecked={this.state.urlSet.has(CF_ORG_URL(r.id))}/> </div></td>
                         <td></td>
