@@ -9,6 +9,8 @@ import './css/RankList.css';
 import logo from '../logo.svg';
 import { GetRanklistUrl} from "../lib/Goto"
 import {StringToHandleSet } from "../lib/Handles"
+import TimeCounter from './TimeViewer'
+import TimeViewer from './TimeViewer'
 
 
 const CONTEST_FINISHED = "FINISHED"
@@ -305,13 +307,17 @@ class RankList extends React.Component{
 
             <div className="con-info">
                 <div className="con-tittle"><span>{cf.contest.name}</span></div>
+                <div className="con-meta">
+                    <div className="con-duration"><TimeViewer mode="view" seconds={cf.contest.durationSeconds} verbose={true} label="Duration"></TimeViewer></div>
+                    <div className="con-countdown"><TimeViewer mode="count-down" seconds={cf.contest.startTimeSeconds + cf.contest.durationSeconds} label="Remaining"></TimeViewer></div>
+                </div>
                 <div className="rank-filters"><span>{this.state.filterNames}</span></div>
             </div>
 
             <div className="ranklist">
                 <Table variant="dark" size="sm" responsive="sm" striped bordered>
                     <thead>
-                        <tr>
+                        <tr className="con-status">
                             <th className="white-hyperlink" colSpan="100">
                                 <a target="_blank" href={"https://codeforces.com/contest/" + this.props.contestID + "/standings"}>{GetContestStatusText(cf.contest.phase)}</a>
                             </th>

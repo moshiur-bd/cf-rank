@@ -8,19 +8,39 @@
 }
 
 .con-info{
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  margin: 3px 0%;
-}
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin: 3px 0%;
+    font-size: 80%;
 
-.con-tittle{
+}
+.con-meta{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    vertical-align: auto;
+    margin: 3px 0%;
     font-size: 80%;
 }
+
+
+.con-countdown, .con-duration{
+    font-size: 90%;
+    padding-right:10px;
+    margin: auto;
+}
+
 .rank-filters{
-    font-size: 50%;
+    font-size: 60%;
+}
+
+.con-status{
+    font-size: 70%;
 }
 
 .input-url{
