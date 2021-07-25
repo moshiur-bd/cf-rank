@@ -104,8 +104,6 @@ export async function ParseCFOrgs() {
                 let nameEndsAt = NameAndCnt.lastIndexOf(',');
                 let handleCount = parseInt(NameAndCnt.substr(nameEndsAt + 1))
                 handleCount = isNaN(handleCount)? 0: handleCount
-                debugger
-
                 resp.push({ name: NameAndCnt.substr(0, nameEndsAt), id: orgID, hc:handleCount})
             }
             return resp

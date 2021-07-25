@@ -87,7 +87,6 @@ export default class AssetSetup extends Component {
 
     async setup (){
         this.ls = new Set((await ParseFileLS()).split(/\n/))
-        debugger
         console.log("Starting setup")
         let orgs = await ParseCFOrgs()
         this.setState({completed:1, total:100})

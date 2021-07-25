@@ -116,6 +116,9 @@ class RankList extends React.Component{
 
     async actionFetchUserInfo() {
         let hs = [...this.state.handlesSetRankQ]
+        if(hs.length <= 0){
+            return
+        }
 
         let handles = ""
         let promises = []
@@ -188,9 +191,7 @@ class RankList extends React.Component{
         this.turnOffProgressBar()
         if (this.state.needRetry) {
             this.parseRankInterval = setInterval(() => { 
-                this.actionFetchRanksAndFilterByUsers().then(
-                () => this.actionFetchUserInfo()
-                )
+                this.BuildRanklist()
             }, 30000);
         }
     }

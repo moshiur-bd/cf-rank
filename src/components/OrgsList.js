@@ -41,8 +41,6 @@ class OrgsList extends React.Component{
             this.state.searchStr = ""
         }
         this.state.data.map((org) => {
-            debugger
-
             let rID = this.refID[org.id]
             if (rID === undefined) {
                 return

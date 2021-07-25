@@ -7,7 +7,6 @@ export const CF_ORG_URL = (orgID) => CF_FE + `/ratings/organization/` + orgID
 export const CF_ORG_URL_TO_ID = (url) => url.substr(url.lastIndexOf('/') + 1)
 
 export const UrlsToNames = async (url) => {
-    debugger
     let orgs = await ParseCFOrgsCached()
     let names = ""
     let urls = url.split(";")
