@@ -3,12 +3,12 @@ import RankRow from "./RankRow"
 import Navigation from "./Navigation"
 import React from 'react'
 import { ParseCFHandles, FetchRanks, FetchUserInfo } from "../lib/CF/API"
-import { GetContestStatusText, ParseCFHandlesCached, CF_ORG_URL_TO_ID } from "../lib/CF/Local"
+import { GetContestStatusText, ParseCFHandlesCached, UrlsToNames } from "../lib/CF/Local"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/RankList.css';
 import logo from '../logo.svg';
 import { GetRanklistUrl} from "../lib/Goto"
-import { IsSameHandles, UniqueParsedHandles, StringToHandleSet } from "../lib/Handles"
+import {StringToHandleSet } from "../lib/Handles"
 
 
 const CONTEST_FINISHED = "FINISHED"
@@ -20,7 +20,7 @@ class RankList extends React.Component{
     constructor(props) {
         super(props);
         this.state = { data: null, loading: true, needRetry: true, failed: false, renderCount: 0, userInfo: {}, userInfoCnt:0, handlesSet: StringToHandleSet(props.handles), handlesSetInRank: new Set(), handlesSetRankQ: new Set(),
-                progressBar:{handles:false, rank:false, info:false, show:true}
+                progressBar:{handles:false, rank:false, info:false, show:true, filterNames:""}
         };
     }
 
@@ -175,8 +175,13 @@ class RankList extends React.Component{
         this.setState({ progressBar: {show:false}, renderCount: this.state.renderCount + 1})
     }
 
+    async setRanklistFilters() {
+        this.state.filterNames = await UrlsToNames(this.props.url)
+    }
+
     async setRefreshIfNecessary(){
         await this.parseHandlesFromAllUrlsAndSet(this.props.url)
+        this.setRanklistFilters()
         this.state.progressBar.handles = true
         
         await this.BuildRanklist()
@@ -298,7 +303,9 @@ class RankList extends React.Component{
             {cf.contest.phase !== CONTEST_FINISHED && <img src={logo} className="App-logo-animate" alt="logo" />}
 
             <div className="con-tittle">
-                {cf.contest.name}
+                {cf.contest.name} 
+                <br></br>
+                <span style={{ fontSize: "50%" }}>{this.state.filterNames}</span>
             </div>
 
             <div className="ranklist">

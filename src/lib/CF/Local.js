@@ -6,6 +6,21 @@ import { CF_API, CF_FE, CONTEST_FINISHED } from './Constants'
 export const CF_ORG_URL = (orgID) => CF_FE + `/ratings/organization/` + orgID
 export const CF_ORG_URL_TO_ID = (url) => url.substr(url.lastIndexOf('/') + 1)
 
+export const UrlsToNames = async (url) => {
+    debugger
+    let orgs = await ParseCFOrgsCached()
+    let names = ""
+    let urls = url.split(";")
+    for (let i = 0; i < urls.length; i++) {
+        if (urls[i] === "") return
+        let lastPart = urls[i].substr(urls[i].lastIndexOf('/') + 1)
+        let org = orgs.find(o => o.id == lastPart)
+        names += (org ? org.name : lastPart) + " || "
+    }
+
+    return (names.length < 4)? "": names.substr(0, names.length - 4)
+}
+
 export async function ParseCFOrgsCached() {
     return fetch("assets/orgs.json", {
         headers:{
