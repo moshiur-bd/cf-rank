@@ -14,7 +14,10 @@ export async function ParseCFOrgsCached() {
         }
     })
     .then((response) => {
-        return response.json()
+        if(response.status === 200) {
+            return response.json()
+        }
+        return null
     })
 }
 

@@ -142,8 +142,11 @@ class OrgsList extends React.Component{
 
 
     async parseOrgs(){
-        // let orgs = await ParseCFOrgs()
         let data = await ParseCFOrgsCached()
+        if(data === null){
+            data = await ParseCFOrgs()
+        }
+        this.state.loading = false
         this.setState({
             data:data,
             renderCount: this.state.renderCount + 1
