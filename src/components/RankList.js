@@ -22,7 +22,7 @@ class RankList extends React.Component{
     constructor(props) {
         super(props);
         this.state = { data: null, loading: true, needRetry: true, failed: false, renderCount: 0, userInfo: {}, userInfoCnt:0, handlesSet: StringToHandleSet(props.handles), handlesSetInRank: new Set(), handlesSetRankQ: new Set(),
-                progressBar:{handles:false, rank:false, info:false, show:true, filterNames:""}
+            progressBar: { handles: false, forceHandles:false, showForceHandles:true, rank:false, info:false, show:true, filterNames:""}
         };
     }
 
@@ -155,6 +155,26 @@ class RankList extends React.Component{
         }
     }
 
+    async forceParseHandlesFromAllUrlsAndSet(url) {
+        let hc = this.state.handlesSet.size
+        let urls = url.split(";")
+        for (let i = 0; i < urls.length; i++) {
+            this.state.progressBar.forceHandles = false
+            this.setState({ renderCount: this.state.renderCount + 1 })
+            if (urls[i] === "") return
+            let handles = (await ParseCFHandles(urls[i])).handles
+            if (handles == undefined) handles = ""
+            handles.split(";").map(h => this.state.handlesSet.add(h))
+            this.state.handlesSet.delete("")
+        }
+        this.state.progressBar.forceHandles = true
+        this.setState({ renderCount: this.state.renderCount + 1 })
+        if (this.state.handlesSet.size > hc) {
+            this.BuildRanklist()
+        }
+        console.table({ log: "Total handles", count: this.state.handlesSet.size })
+    }
+
     async parseHandlesFromAllUrlsAndSet(url) {
         let urls = url.split(";")
         for (let i = 0; i < urls.length; i++) {
@@ -164,6 +184,10 @@ class RankList extends React.Component{
             let handles = (await ParseCFHandlesCached(urls[i])).handles
             if(handles === ""){
                 handles = (await ParseCFHandles(urls[i])).handles
+                this.state.progressBar.showForceHandles = false
+            } else {
+                this.forceParseHandlesFromAllUrlsAndSet(url)
+                this.state.progressBar.showForceHandles = true
             }
             if(handles == undefined) handles = ""
             handles.split(";").map(h => this.state.handlesSet.add(h))
@@ -176,6 +200,13 @@ class RankList extends React.Component{
     }
 
     async turnOffProgressBar() {
+        let show = true
+        while(show){
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            if (this.state.progressBar.showForceHandles) {
+                show = !this.state.progressBar.forceHandles || !this.state.progressBar.info
+            } else show = !this.state.progressBar.info
+        }
         await new Promise(resolve => setTimeout(resolve, 1000 * 5));
         this.setState({ progressBar: {show:false}, renderCount: this.state.renderCount + 1})
     }
@@ -250,10 +281,17 @@ class RankList extends React.Component{
         let infoNow = rankStatus ? 50 : 0
         let infoText = infoStatus ? "parsed user info for " + this.state.userInfoCnt + " handles" : "parsing user info from codeforces..."
 
+        let forceHandleStatus = this.state.progressBar.forceHandles
+        let forceHandleNow = handleStatus ? 50 : 0
+        let forceHandleText = forceHandleStatus ? "parsed(now) " + this.state.handlesSet.size + " handles" : "parsing handles from urls: " + this.state.handlesSet.size
+
+
         return <ProgressBar>
             <ProgressBar variant="info" now={handleNow} label={handleText} key={1} animated={!handleStatus} />
             <ProgressBar variant="success" now={rankNow} label={rankText} key={1} animated={!rankStatus} />
             <ProgressBar variant="info" now={infoNow} label={infoText} key={1} animated={!infoStatus} />
+            {this.state.progressBar.showForceHandles && <ProgressBar variant="success" now={forceHandleNow} label={forceHandleText} key={1} animated={!forceHandleStatus} />}
+
         </ProgressBar>
     }
 
